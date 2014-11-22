@@ -10,3 +10,4 @@ tmp
 .ruby-env
 .idea
 spike
+*.gem
