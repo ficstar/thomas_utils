@@ -5,7 +5,7 @@ describe ObjectStream do
     attr_reader :buffer
   end
 
-  subject { ObjectStream.new(proc) }
+  subject { ObjectStream.new(&proc) }
   let(:proc) { Proc.new {} }
 
   describe '#<<' do
@@ -16,20 +16,20 @@ describe ObjectStream do
   end
 
   describe '#flush' do
-    let(:proc) { double(:proc) }
+    let(:proc) { Proc.new { |values| @values = values } }
 
     it 'should call the provided procedure with all current available data' do
       subject << 'hello'
-      expect(proc).to receive(:call).with(%w(hello))
       subject.flush
+      expect(@values.first).to eq('hello')
     end
 
     context 'with multiple buffered items' do
       it 'should call the procedure with all buffered items' do
         subject << 'hello'
         subject << 'world'
-        expect(proc).to receive(:call).with(%w(hello world))
         subject.flush
+        expect(@values).to eq(%w(hello world))
       end
     end
   end

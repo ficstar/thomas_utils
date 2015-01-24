@@ -1,8 +1,8 @@
 class ObjectStream
 
-  def initialize(proc)
+  def initialize(&callback)
     @buffer = Queue.new
-    @proc = proc
+    @callback = callback
   end
 
   def <<(item)
@@ -12,6 +12,6 @@ class ObjectStream
   def flush
     length = @buffer.size
     items = length.times.map { @buffer.pop }
-    @proc.call(items)
+    @callback.call(items)
   end
 end
