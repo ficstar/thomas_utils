@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
-  s.name = 'object_stream'
-  s.version = '0.1.0'
+  s.name = 'thomas_utils'
+  s.version = '0.1.1'
   s.license = 'Apache License 2.0'
   s.summary = ''
   s.description = ''

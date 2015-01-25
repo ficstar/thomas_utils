@@ -14,6 +14,6 @@
 # limitations under the License.
 #++
 
-require 'object_stream/object_stream'
-require 'object_stream/periodic_flusher'
-require 'object_stream/future_wrapper'
+require 'thomas_utils/object_stream'
+require 'thomas_utils/periodic_flusher'
+require 'thomas_utils/future_wrapper'
