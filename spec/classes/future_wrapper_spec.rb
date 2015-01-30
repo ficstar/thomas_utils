@@ -2,17 +2,7 @@ require 'rspec'
 
 module ThomasUtils
   describe FutureWrapper do
-    class Future
-      def join
-
-      end
-
-      def get
-        'value'
-      end
-    end
-
-    let(:future) { Future.new }
+    let(:future) { MockFuture.new }
     let(:wrapper) do
       FutureWrapper.new(future) { |value| "some #{value}" }
     end
