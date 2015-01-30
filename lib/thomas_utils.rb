@@ -17,3 +17,4 @@
 require 'thomas_utils/object_stream'
 require 'thomas_utils/periodic_flusher'
 require 'thomas_utils/future_wrapper'
+require 'thomas_utils/multi_future_wrapper'
