@@ -16,7 +16,7 @@ module ThomasUtils
     let!(:result_id) { SecureRandom.uuid }
 
     before do
-      expect(::Concurrent::Future).to receive(:execute) do |&block|
+      expect(::Concurrent::Future).to receive(:execute).with(executor: Future::EXECUTOR) do |&block|
         future_options[:value] = block.call
       end.and_return(future)
     end

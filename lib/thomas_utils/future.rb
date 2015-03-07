@@ -1,7 +1,9 @@
 module ThomasUtils
   class Future
+    EXECUTOR = Concurrent::CachedThreadPool.new
+
     def initialize
-      @future = ::Concurrent::Future.execute do
+      @future = ::Concurrent::Future.execute(executor: EXECUTOR) do
         begin
           @result = yield
           @result = @result.get if @result.is_a?(FutureWrapper)
