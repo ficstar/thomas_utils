@@ -2,7 +2,7 @@
 source 'http://rubygems.org'
 
 gem 'workers'
-gem 'concurrent-ruby', require: 'concurrent/future'
+gem 'concurrent-ruby', require: 'concurrent'
 group :test do
   gem 'guard-rspec'
   gem 'guard-bundler'
