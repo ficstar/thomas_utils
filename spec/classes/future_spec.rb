@@ -55,6 +55,23 @@ module ThomasUtils
       end
     end
 
+    describe '#join' do
+      subject { future_wrapper.join }
+
+      it 'should delegate to #get' do
+        expect(future_wrapper).to receive(:get)
+        subject
+      end
+
+      context 'when the block raises an error' do
+        let(:block) { error_block }
+
+        it 'should not raise an error' do
+          expect { subject }.not_to raise_error
+        end
+      end
+    end
+
     describe '#on_success' do
       it 'should yield the value' do
         expect { |block| future_wrapper.on_success(&block) }.to yield_with_args('Hello, World!')

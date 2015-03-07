@@ -22,6 +22,10 @@ module ThomasUtils
       result
     end
 
+    def join
+      get rescue nil
+    end
+
     def on_success(&block)
       if @future.fulfilled?
         block.call(@result) unless @error
