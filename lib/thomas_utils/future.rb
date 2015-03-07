@@ -4,6 +4,7 @@ module ThomasUtils
       @future = ::Concurrent::Future.execute do
         begin
           @result = yield
+          @result = @result.get if @result.is_a?(FutureWrapper)
           @success_callback.call(@result) if @success_callback
           @result
         rescue => e

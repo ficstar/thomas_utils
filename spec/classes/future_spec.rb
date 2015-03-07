@@ -7,29 +7,32 @@ module ThomasUtils
     let(:error_block) { -> { raise 'Goodbye, World!' } }
     let(:future_wrapper) { Future.new(&block) }
     let(:fulfilled) { true }
-    let(:future) { double(:future, fulfilled?: fulfilled, value: futurize(good_block.call)) }
+    let(:future_options) { { } }
+    let(:future) do
+      future = double(:future, fulfilled?: fulfilled)
+      allow(future).to receive(:value) { future_options[:value] }
+      future
+    end
     let!(:result_id) { SecureRandom.uuid }
 
-    def futurize(value)
-      "(tag: #{result_id}) FUTURE OF #{value}"
-    end
-
     before do
-      expect(::Concurrent::Future).to receive(:execute).and_yield.and_return(future)
+      expect(::Concurrent::Future).to receive(:execute) do |&block|
+        future_options[:value] = block.call
+      end.and_return(future)
     end
 
     describe '#get' do
       subject { future_wrapper.get }
 
       it 'should be the value of the specified block' do
-        is_expected.to eq(futurize('Hello, World!'))
+        is_expected.to eq('Hello, World!')
       end
 
       context 'with a different value' do
         let(:good_block) { -> { 'Goodbye, World!' } }
 
         it 'should be the value of the specified block' do
-          is_expected.to eq(futurize('Goodbye, World!'))
+          is_expected.to eq('Goodbye, World!')
         end
       end
 
@@ -38,6 +41,16 @@ module ThomasUtils
 
         it 'should re-raise the error' do
           expect { subject }.to raise_error('Goodbye, World!')
+        end
+      end
+
+      context 'when the result is a future wrapper' do
+        let(:result_future) { double(:future, get: 'Hello, World!') }
+        let(:result_future_wrapper) { FutureWrapper.new(result_future) { |res| res } }
+        let(:good_block) { -> { result_future_wrapper } }
+
+        it 'should return the result of that future' do
+          is_expected.to eq('Hello, World!')
         end
       end
     end
