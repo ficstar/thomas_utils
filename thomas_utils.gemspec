@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'thomas_utils'
-  s.version = '0.1.5'
+  s.version = '0.1.6'
   s.license = 'Apache License 2.0'
   s.summary = ''
   s.description = ''
