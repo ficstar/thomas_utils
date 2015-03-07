@@ -1,6 +1,6 @@
 module ThomasUtils
   class Future
-    EXECUTOR = Concurrent::CachedThreadPool.new
+    EXECUTOR = ::Concurrent::CachedThreadPool.new
 
     def initialize
       @future = ::Concurrent::Future.execute(executor: EXECUTOR) do
