@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     celluloid (0.16.0)
       timers (~> 4.0.0)
@@ -8,6 +8,7 @@ GEM
       ref (~> 1.0, >= 1.0.5)
     concurrent-ruby (0.8.0-java)
     diff-lcs (1.2.5)
+    ffi (1.9.6)
     ffi (1.9.6-java)
     ffi (1.9.6-x64-mingw32)
     formatador (0.2.5)
@@ -41,6 +42,10 @@ GEM
     notiffany (0.0.6)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     pry (0.10.1-java)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -80,6 +85,7 @@ GEM
 
 PLATFORMS
   java
+  ruby
   x64-mingw32
 
 DEPENDENCIES
