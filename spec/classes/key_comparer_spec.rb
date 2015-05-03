@@ -18,14 +18,14 @@ module ThomasUtils
     end
 
   end
+end
 
-  describe Symbol do
-    {eq: '=', gt: '>', ge: '>=', le: '<=', lt: '<', ne: '!='}.each do |operator, comparer|
-      let(:key) { :key }
-      describe "##{operator}" do
-        subject { "#{:key.send(operator)}" }
-        it { is_expected.to eq("key #{comparer}") }
-      end
+describe Symbol do
+  {eq: '=', gt: '>', ge: '>=', le: '<=', lt: '<', ne: '!='}.each do |operator, comparer|
+    let(:key) { :key }
+    describe "##{operator}" do
+      subject { "#{:key.send(operator)}" }
+      it { is_expected.to eq("key #{comparer}") }
     end
   end
 end
