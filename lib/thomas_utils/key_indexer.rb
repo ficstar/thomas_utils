@@ -1,5 +1,7 @@
 module ThomasUtils
   class KeyIndexer
+    attr_reader :key
+
     def initialize(key, index)
       @key = key
       @index = index
