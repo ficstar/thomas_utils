@@ -1,10 +1,12 @@
 module ThomasUtils
   class Future
-    EXECUTOR = ::Concurrent::CachedThreadPool.new
+    DEFAULT_EXECUTOR = ::Concurrent::CachedThreadPool.new
 
-    def initialize
+    def initialize(options = {})
+      options[:executor] ||= DEFAULT_EXECUTOR
+
       @mutex = Mutex.new
-      @future = ::Concurrent::Future.execute(executor: EXECUTOR) do
+      @future = ::Concurrent::Future.execute(executor: options[:executor]) do
         begin
           @result = yield
           @result = @result.get if @result.is_a?(FutureWrapper)
