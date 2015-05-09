@@ -3,15 +3,16 @@ module ThomasUtils
     EXECUTOR = ::Concurrent::CachedThreadPool.new
 
     def initialize
+      @mutex = Mutex.new
       @future = ::Concurrent::Future.execute(executor: EXECUTOR) do
         begin
           @result = yield
           @result = @result.get if @result.is_a?(FutureWrapper)
-          @success_callback.call(@result) if @success_callback
+          @mutex.synchronize { @success_callback.call(@result) if @success_callback }
           @result
         rescue => e
           @error = e
-          @failure_callback.call(e) if @failure_callback
+          @mutex.synchronize { @failure_callback.call(e) if @failure_callback }
         end
       end
     end
@@ -27,19 +28,13 @@ module ThomasUtils
     end
 
     def on_success(&block)
-      if @future.fulfilled?
-        block.call(@result) unless @error
-      else
-        @success_callback = block
-      end
+      @mutex.synchronize { @success_callback = block }
+      @success_callback.call(@result) if @future.fulfilled? && !@error
     end
 
     def on_failure(&block)
-      if @future.fulfilled?
-        block.call(@error) if @error
-      else
-        @failure_callback = block
-      end
+      @mutex.synchronize { @failure_callback = block }
+      @failure_callback.call(@error) if @future.fulfilled? && @error
     end
   end
 end
