@@ -23,7 +23,11 @@ module ThomasUtils
     end
 
     def on_success
-      @futures.each { |future| future.on_success { |result| yield @callback.call(result) } }
+      if @leader
+        @leader.on_success { |result| yield @callback.call(result) }
+      else
+        @futures.each { |future| future.on_success { |result| yield @callback.call(result) } }
+      end
     end
   end
 end

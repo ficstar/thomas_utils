@@ -80,6 +80,23 @@ module ThomasUtils
           expect(resulting_value).to eq(["some #{future.get}", "some #{future.get}"])
         end
       end
+
+      context 'when provided with a leader future' do
+        let(:leader_future) { MockFuture.new }
+        let(:futures) { [future, leader_future] }
+
+        subject { MultiFutureWrapper.new(futures, leader_future, &proc) }
+
+        it 'should delegate to the leader' do
+          expect(leader_future).to receive(:on_success)
+          subject.on_success {}
+        end
+
+        it 'should not call it on the other futures' do
+          expect(future).not_to receive(:on_success)
+          subject.on_success {}
+        end
+      end
     end
 
     describe '#get' do
