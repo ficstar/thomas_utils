@@ -45,6 +45,23 @@ module ThomasUtils
           subject.on_failure(&rescue_block)
         end
       end
+
+      context 'when provided with a leader future' do
+        let(:leader_future) { MockFuture.new }
+        let(:futures) { [future, leader_future] }
+
+        subject { MultiFutureWrapper.new(futures, leader_future, &proc) }
+
+        it 'should delegate to the leader' do
+          expect(leader_future).to receive(:on_failure)
+          subject.on_failure(&rescue_block)
+        end
+
+        it 'should not call it on the other futures' do
+          expect(future).not_to receive(:on_failure)
+          subject.on_failure(&rescue_block)
+        end
+      end
     end
 
     describe '#on_success' do
