@@ -1,5 +1,7 @@
 module ThomasUtils
   class KeyComparer
+    attr_reader :key
+
     def initialize(key, comparer)
       @key = key
       @comparer = comparer

@@ -5,8 +5,8 @@ module ThomasUtils
     describe '#to_s' do
       %w(= > >= <= < !=).each do |comparer|
         context "when #{comparer}" do
-          let(:key) { :key }
           subject { "#{KeyComparer.new(key, comparer)}" }
+          let(:key) { :key }
           it { is_expected.to eq("key #{comparer}") }
 
           context 'with a different key' do
@@ -17,6 +17,18 @@ module ThomasUtils
       end
     end
 
+    describe '#key' do
+      let(:key) { :key }
+
+      subject { KeyComparer.new(key, '>') }
+
+      its(:key) { is_expected.to eq(key) }
+
+      context 'with a different key' do
+        let(:key) { :different_key }
+        its(:key) { is_expected.to eq(key) }
+      end
+    end
   end
 end
 

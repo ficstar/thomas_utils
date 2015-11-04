@@ -7,4 +7,5 @@ group :test do
   gem 'guard-bundler'
   gem 'guard'
   gem 'rspec'
+  gem 'rspec-its'
 end
