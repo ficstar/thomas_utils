@@ -7,6 +7,10 @@ module ThomasUtils
       @comparer = comparer
     end
 
+    def new_key(updated_key)
+      KeyComparer.new(updated_key, @comparer)
+    end
+
     def to_s
       "#{@key} #{@comparer}"
     end

@@ -29,6 +29,24 @@ module ThomasUtils
         its(:key) { is_expected.to eq(key) }
       end
     end
+
+    describe '#new_key' do
+      let(:new_key) { :updated_key }
+      subject { "#{KeyComparer.new(:key, '>').new_key(new_key)}" }
+
+      it 'should return an updated KeyComparer with the new key' do
+        is_expected.to eq('updated_key >')
+      end
+
+
+      context 'with a different key' do
+        let(:new_key) { :different_key }
+
+        it 'should return an updated KeyComparer with the new key' do
+          is_expected.to eq('different_key >')
+        end
+      end
+    end
   end
 end
 
