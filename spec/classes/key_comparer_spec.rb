@@ -63,6 +63,24 @@ module ThomasUtils
         end
       end
     end
+
+    describe '#==' do
+      let(:lhs) { KeyComparer.new('key', '>') }
+      let(:rhs) { KeyComparer.new('key', '>') }
+      subject { lhs == rhs }
+
+      it { is_expected.to eq(true) }
+
+      context 'with different keys' do
+        let(:rhs) { KeyComparer.new('other key', '>') }
+        it { is_expected.to eq(false) }
+      end
+
+      context 'with different comprarers' do
+        let(:rhs) { KeyComparer.new('key', '<') }
+        it { is_expected.to eq(false) }
+      end
+    end
   end
 end
 

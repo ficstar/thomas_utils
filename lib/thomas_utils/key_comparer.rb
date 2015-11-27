@@ -17,6 +17,10 @@ module ThomasUtils
       "#{pretty_key} #{@comparer}"
     end
 
+    def ==(rhs)
+      to_s == rhs.to_s
+    end
+
     private
 
     def pretty_key
