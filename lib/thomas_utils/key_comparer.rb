@@ -3,6 +3,7 @@ module ThomasUtils
     attr_reader :key
 
     def initialize(key, comparer)
+      key = "(#{key * ','})" if key.is_a?(Array)
       @key = key
       @comparer = comparer
     end

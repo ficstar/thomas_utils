@@ -15,6 +15,17 @@ module ThomasUtils
           end
         end
       end
+
+      context 'when the key is an array' do
+        let(:key) { %w(a b c d) }
+        subject { "#{KeyComparer.new(key, '>')}" }
+        it { is_expected.to eq('(a,b,c,d) >') }
+
+        context 'with a different key' do
+          let(:key) { %w(e f g h) }
+          it { is_expected.to eq('(e,f,g,h) >') }
+        end
+      end
     end
 
     describe '#key' do
