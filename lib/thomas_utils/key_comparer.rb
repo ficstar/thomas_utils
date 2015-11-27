@@ -25,6 +25,10 @@ module ThomasUtils
       self == rhs
     end
 
+    def hash
+      to_s.hash
+    end
+
     private
 
     def pretty_key
