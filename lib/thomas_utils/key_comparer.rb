@@ -21,6 +21,10 @@ module ThomasUtils
       to_s == rhs.to_s
     end
 
+    def eql?(rhs)
+      self == rhs
+    end
+
     private
 
     def pretty_key

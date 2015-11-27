@@ -64,23 +64,29 @@ module ThomasUtils
       end
     end
 
-    describe '#==' do
-      let(:lhs) { KeyComparer.new('key', '>') }
-      let(:rhs) { KeyComparer.new('key', '>') }
-      subject { lhs == rhs }
+    shared_examples_for 'a comparison operator' do |method|
+      describe "##{method}" do
+        let(:lhs) { KeyComparer.new('key', '>') }
+        let(:rhs) { KeyComparer.new('key', '>') }
+        subject { lhs.public_send(method, rhs) }
 
-      it { is_expected.to eq(true) }
+        it { is_expected.to eq(true) }
 
-      context 'with different keys' do
-        let(:rhs) { KeyComparer.new('other key', '>') }
-        it { is_expected.to eq(false) }
-      end
+        context 'with different keys' do
+          let(:rhs) { KeyComparer.new('other key', '>') }
+          it { is_expected.to eq(false) }
+        end
 
-      context 'with different comprarers' do
-        let(:rhs) { KeyComparer.new('key', '<') }
-        it { is_expected.to eq(false) }
+        context 'with different comprarers' do
+          let(:rhs) { KeyComparer.new('key', '<') }
+          it { is_expected.to eq(false) }
+        end
       end
     end
+
+    it_behaves_like 'a comparison operator', :==
+    it_behaves_like 'a comparison operator', :eql?
+
   end
 end
 
