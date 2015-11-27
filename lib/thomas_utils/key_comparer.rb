@@ -43,3 +43,29 @@ class Symbol
     ThomasUtils::KeyComparer.new(self, '!=')
   end
 end
+
+class Array
+  def eq
+    ThomasUtils::KeyComparer.new(self, '=')
+  end
+
+  def ge
+    ThomasUtils::KeyComparer.new(self, '>=')
+  end
+
+  def gt
+    ThomasUtils::KeyComparer.new(self, '>')
+  end
+
+  def le
+    ThomasUtils::KeyComparer.new(self, '<=')
+  end
+
+  def lt
+    ThomasUtils::KeyComparer.new(self, '<')
+  end
+
+  def ne
+    ThomasUtils::KeyComparer.new(self, '!=')
+  end
+end
