@@ -39,6 +39,11 @@ module ThomasUtils
         let(:key) { :different_key }
         its(:key) { is_expected.to eq(key) }
       end
+
+      context 'with an array key' do
+        let(:key) { %w(array of keys) }
+        its(:key) { is_expected.to eq(key) }
+      end
     end
 
     describe '#new_key' do
