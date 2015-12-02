@@ -2,11 +2,13 @@ Gem::Specification.new do |s|
   s.name = 'thomas_utils'
   s.version = '0.1.13'
   s.license = 'Apache License 2.0'
-  s.summary = ''
-  s.description = ''
+  s.summary = 'Helper utilities gem used in a number of my projects'
+  s.description = %q{Helper utilities gem used in a number of my projects.
+  Includes future wrappers and provides some override methods for Ruby core classes
+  that make defining behaviours easier to code.}
   s.authors = ['Thomas RM Rogers']
   s.email = 'thomasrogers03@gmail.com'
   s.files = Dir['{lib}/**/*.rb', 'bin/*', 'LICENSE.txt', '*.md']
   s.require_path = 'lib'
-  s.homepage = ''
+  s.homepage = 'https://www.github.com/thomasrogers03/thomas_utils'
 end
