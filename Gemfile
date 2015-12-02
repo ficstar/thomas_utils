@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 
-gem 'workers'
-gem 'concurrent-ruby', require: 'concurrent'
+group :development do
+  gem 'workers'
+  gem 'concurrent-ruby'
+end
+
 group :test do
   gem 'guard-rspec'
   gem 'guard-bundler'

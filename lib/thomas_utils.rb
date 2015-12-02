@@ -14,6 +14,8 @@
 # limitations under the License.
 #++
 
+require 'concurrent'
+
 require 'thomas_utils/object_stream'
 require 'thomas_utils/periodic_flusher'
 require 'thomas_utils/future_wrapper'
