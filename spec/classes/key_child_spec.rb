@@ -28,6 +28,24 @@ module ThomasUtils
         end
       end
     end
+
+    describe '#quote' do
+      let(:key) { Faker::Lorem.word }
+      let(:value) { Faker::Lorem.word }
+      let(:quote) { '`' }
+      let(:quoted_key) { "`#{key}`.`#{value}`" }
+
+      subject { KeyChild.new(key, value).quote(quote) }
+
+      it { is_expected.to eq(quoted_key) }
+
+      context 'with a different quote type' do
+        let(:quote) { '"' }
+        let(:quoted_key) { %Q{"#{key}"."#{value}"} }
+
+        it { is_expected.to eq(quoted_key) }
+      end
+    end
   end
 end
 

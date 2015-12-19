@@ -11,6 +11,7 @@ group :test do
   gem 'guard'
   gem 'rspec'
   gem 'rspec-its'
+  gem 'faker'
 end
 
 gemspec
