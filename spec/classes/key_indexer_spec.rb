@@ -2,6 +2,10 @@ require 'rspec'
 
 module ThomasUtils
   describe KeyIndexer do
+    subject { KeyIndexer.new(:key, 'value') }
+
+    it { is_expected.to be_a_kind_of(SymbolHelpers) }
+
     %w(Address Details).each do |key|
       %w(Name Street).each do |index|
         context "when the key is #{key}" do

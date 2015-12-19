@@ -1,6 +1,5 @@
 module ThomasUtils
   class KeyComparer
-    OPERATOR_MAP = {eq: '=', ge: '>=', gt: '>', le: '<=', lt: '<', ne: '!='}
 
     attr_reader :key
 
@@ -34,17 +33,5 @@ module ThomasUtils
     def pretty_key
       key.is_a?(Array) ? "(#{key * ','})" : key
     end
-  end
-end
-
-class Symbol
-  ThomasUtils::KeyComparer::OPERATOR_MAP.each do |method, operator|
-    define_method(method) { ThomasUtils::KeyComparer.new(self, operator) }
-  end
-end
-
-class Array
-  ThomasUtils::KeyComparer::OPERATOR_MAP.each do |method, operator|
-    define_method(method) { ThomasUtils::KeyComparer.new(self, operator) }
   end
 end

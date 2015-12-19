@@ -1,5 +1,7 @@
 module ThomasUtils
   class KeyChild
+    include SymbolHelpers
+
     attr_reader :key, :child
 
     def initialize(key, child)
@@ -10,11 +12,5 @@ module ThomasUtils
     def to_s
       "#{@key}.#{@child}"
     end
-  end
-end
-
-class Symbol
-  def child(name)
-    ThomasUtils::KeyChild.new(self, name)
   end
 end
