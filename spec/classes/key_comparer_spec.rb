@@ -64,6 +64,38 @@ module ThomasUtils
       end
     end
 
+    describe '#quote' do
+      let(:key) { Faker::Lorem.word }
+      let(:comparer) { :> }
+      let(:quote) { '`' }
+      let(:quoted_key) { "`#{key}` >" }
+
+      subject { KeyComparer.new(key, comparer).quote(quote) }
+
+      it { is_expected.to eq(quoted_key) }
+
+      context 'with a different quote type' do
+        let(:quote) { '"' }
+        let(:quoted_key) { %Q{"#{key}" >} }
+
+        it { is_expected.to eq(quoted_key) }
+      end
+
+      context 'with a different comparer' do
+        let(:comparer) { :<= }
+        let(:quoted_key) { "`#{key}` <=" }
+
+        it { is_expected.to eq(quoted_key) }
+      end
+
+      context 'when the key itself is a KeyChild' do
+        let(:key) { KeyChild.new(Faker::Lorem.word, Faker::Lorem.word) }
+        let(:quoted_key) { "`#{key.key}`.`#{key.child}` >" }
+
+        it { is_expected.to eq(quoted_key) }
+      end
+    end
+
     shared_examples_for 'a comparison operator' do |method|
       describe "##{method}" do
         let(:lhs) { KeyComparer.new('key', '>') }

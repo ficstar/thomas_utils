@@ -12,6 +12,15 @@ module ThomasUtils
       KeyComparer.new(updated_key, @comparer)
     end
 
+    def quote(quote)
+      quoted_key = if key.is_a?(KeyChild)
+                     key.quote(quote)
+                   else
+                     "#{quote}#{key}#{quote}"
+                   end
+      "#{quoted_key} #{@comparer}"
+    end
+
     def to_s
       "#{pretty_key} #{@comparer}"
     end
