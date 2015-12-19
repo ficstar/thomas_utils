@@ -45,6 +45,13 @@ module ThomasUtils
 
         it { is_expected.to eq(quoted_key) }
       end
+
+      context 'when the key itself is a KeyChild' do
+        let(:key) { KeyChild.new(Faker::Lorem.word, Faker::Lorem.word) }
+        let(:quoted_key) { "`#{key.key}`.`#{key.child}`.`#{value}`" }
+
+        it { is_expected.to eq(quoted_key) }
+      end
     end
   end
 end

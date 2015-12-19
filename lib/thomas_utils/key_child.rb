@@ -10,7 +10,12 @@ module ThomasUtils
     end
 
     def quote(quote)
-      "#{quote}#{key}#{quote}.#{quote}#{child}#{quote}"
+      quoted_key = if key.is_a?(KeyChild)
+                     key.quote(quote)
+                   else
+                     "#{quote}#{key}#{quote}"
+                   end
+      "#{quoted_key}.#{quote}#{child}#{quote}"
     end
 
     def to_s
