@@ -9,6 +9,10 @@ module ThomasUtils
       @child = child
     end
 
+    def new_key(key)
+      KeyChild.new(key, child)
+    end
+
     def quote(quote)
       quoted_key = if key.is_a?(KeyChild)
                      key.quote(quote)

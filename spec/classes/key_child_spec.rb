@@ -29,6 +29,17 @@ module ThomasUtils
       end
     end
 
+    describe '#new_key' do
+      let(:key) { Faker::Lorem.word }
+      let(:value) { Faker::Lorem.word }
+      let(:new_key) { Faker::Lorem.word }
+      let(:new_key_child) { KeyChild.new(new_key, value) }
+
+      subject { KeyChild.new(key, value).new_key(new_key) }
+
+      its(:to_s) { is_expected.to eq(new_key_child.to_s) }
+    end
+
     describe '#quote' do
       let(:key) { Faker::Lorem.word }
       let(:value) { Faker::Lorem.word }
