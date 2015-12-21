@@ -13,7 +13,7 @@ module ThomasUtils
     end
 
     def quote(quote)
-      quoted_key = if key.is_a?(KeyChild)
+      quoted_key = if key.respond_to?(:quote)
                      key.quote(quote)
                    else
                      "#{quote}#{key}#{quote}"
