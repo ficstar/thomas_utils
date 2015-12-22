@@ -58,7 +58,7 @@ module ThomasUtils
       end
 
       context 'when the key itself responds to #quote' do
-        let(:key_key) {Faker::Lorem.word }
+        let(:key_key) { Faker::Lorem.word }
         let(:key_value) { Faker::Lorem.word }
         let(:key) { double(:quoted_key) }
         let(:quoted_key) { "`#{key_key}`.`#{key_value}`.`#{value}`" }
@@ -76,8 +76,10 @@ module ThomasUtils
 end
 
 describe Symbol do
-  describe '#child' do
-    subject { "#{:hello.child(:world)}" }
-    it { is_expected.to eq('hello.world') }
+  [:>>, :child].each do |method|
+    describe "##{method}" do
+      subject { "#{:hello.public_send(method, :world)}" }
+      it { is_expected.to eq('hello.world') }
+    end
   end
 end

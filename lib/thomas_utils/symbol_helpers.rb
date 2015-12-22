@@ -13,6 +13,7 @@ module ThomasUtils
     def child(name)
       ThomasUtils::KeyChild.new(self, name)
     end
+    alias :>> :child
   end
 end
 
