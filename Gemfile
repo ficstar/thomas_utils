@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 group :development do
-  gem 'workers'
-  gem 'concurrent-ruby'
+  gem 'workers', require: false
+  gem 'concurrent-ruby', require: false
 end
 
 group :test do

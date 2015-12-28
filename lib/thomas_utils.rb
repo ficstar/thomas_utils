@@ -15,6 +15,7 @@
 #++
 
 require 'concurrent'
+require 'workers'
 
 require 'thomas_utils/symbol_helpers'
 require 'thomas_utils/object_stream'
