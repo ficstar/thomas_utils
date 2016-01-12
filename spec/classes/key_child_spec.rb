@@ -72,6 +72,56 @@ module ThomasUtils
         it { is_expected.to eq(quoted_key) }
       end
     end
+
+    describe 'comparison' do
+      let(:key) { Faker::Lorem.word }
+      let(:value) { Faker::Lorem.word }
+      let(:rhs) { KeyChild.new(key, value) }
+
+      subject { KeyChild.new(key, value) }
+
+      it { is_expected.to eq(rhs) }
+
+      context 'with a different key' do
+        let(:rhs) { KeyChild.new(Faker::Lorem.word, value) }
+        it { is_expected.not_to eq(rhs) }
+      end
+
+      context 'with a different value' do
+        let(:rhs) { KeyChild.new(key, Faker::Lorem.word) }
+        it { is_expected.not_to eq(rhs) }
+      end
+    end
+
+    describe 'comparison using eql?' do
+      let(:key) { Faker::Lorem.word }
+      let(:value) { Faker::Lorem.word }
+      let(:rhs) { KeyChild.new(key, value) }
+
+      subject { KeyChild.new(key, value).eql?(rhs) }
+
+      it { is_expected.to eq(true) }
+
+      context 'with a different key' do
+        let(:rhs) { KeyChild.new(Faker::Lorem.word, value) }
+        it { is_expected.to eq(false) }
+      end
+
+      context 'with a different value' do
+        let(:rhs) { KeyChild.new(key, Faker::Lorem.word) }
+        it { is_expected.to eq(false) }
+      end
+    end
+
+    describe '#hash' do
+      let(:key) { Faker::Lorem.word }
+      let(:value) { Faker::Lorem.word }
+      let(:result_hash) { subject.to_s.hash }
+
+      subject { KeyChild.new(key, value) }
+
+      its(:hash) { is_expected.to eq(result_hash) }
+    end
   end
 end
 

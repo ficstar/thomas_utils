@@ -25,5 +25,14 @@ module ThomasUtils
     def to_s
       "#{@key}.#{@child}"
     end
+
+    def ==(rhs)
+      key == rhs.key && child == rhs.child
+    end
+    alias :eql? :==
+
+    def hash
+      to_s.hash
+    end
   end
 end
