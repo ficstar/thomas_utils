@@ -89,7 +89,7 @@ module ThomasUtils
       end
 
       context 'when the key itself responds to #quote' do
-        let(:key_key) {Faker::Lorem.word }
+        let(:key_key) { Faker::Lorem.word }
         let(:key_value) { Faker::Lorem.word }
         let(:key) { double(:quoted_key) }
         let(:quoted_key) { "`#{key_key}`.`#{key_value}` >" }
@@ -124,20 +124,9 @@ module ThomasUtils
       end
     end
 
-    it_behaves_like 'a comparison operator', :==
-    it_behaves_like 'a comparison operator', :eql?
-
-    describe '#hash' do
-      let(:comparer_string) { subject.to_s }
-      subject { KeyComparer.new('key', '>') }
-
-      its(:hash) { is_expected.to eq(comparer_string.hash) }
-
-      context 'with a different KeyComparer' do
-        subject { KeyComparer.new('other_key', '<=') }
-
-        its(:hash) { is_expected.to eq(comparer_string.hash) }
-      end
+    describe 'comparison' do
+      let(:klass) { KeyComparer }
+      it_behaves_like 'defining hashing methods for a key'
     end
 
   end

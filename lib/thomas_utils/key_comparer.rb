@@ -26,16 +26,17 @@ module ThomasUtils
     end
 
     def ==(rhs)
-      to_s == rhs.to_s
+      rhs.is_a?(KeyComparer) && key == rhs.key && comparer == rhs.comparer
     end
-
-    def eql?(rhs)
-      self == rhs
-    end
+    alias :eql? :==
 
     def hash
       to_s.hash
     end
+
+    protected
+
+    attr_reader :comparer
 
     private
 
