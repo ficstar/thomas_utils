@@ -9,7 +9,7 @@ module ThomasUtils
     end
 
     def new_key(updated_key)
-      KeyComparer.new(updated_key, @comparer)
+      KeyComparer.new(updated_key, comparer)
     end
 
     def quote(quote)
@@ -18,11 +18,11 @@ module ThomasUtils
                    else
                      "#{quote}#{key}#{quote}"
                    end
-      "#{quoted_key} #{@comparer}"
+      "#{quoted_key} #{comparer}"
     end
 
     def to_s
-      "#{pretty_key} #{@comparer}"
+      "#{pretty_key} #{comparer}"
     end
 
     def ==(rhs)
