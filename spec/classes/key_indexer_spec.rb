@@ -23,6 +23,12 @@ module ThomasUtils
         end
       end
     end
+
+    describe 'comparison' do
+      let(:klass) { KeyIndexer }
+      it_behaves_like 'defining hashing methods for a key'
+    end
+
   end
 end
 
