@@ -27,7 +27,7 @@ module ThomasUtils
     end
 
     def ==(rhs)
-      key == rhs.key && child == rhs.child
+      rhs.is_a?(KeyChild) && key == rhs.key && child == rhs.child
     end
     alias :eql? :==
 
