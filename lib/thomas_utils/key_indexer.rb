@@ -10,7 +10,7 @@ module ThomasUtils
     end
 
     def to_s
-      "#{@key}['#{@index}']"
+      "#{key}['#{index}']"
     end
 
     def ==(rhs)
