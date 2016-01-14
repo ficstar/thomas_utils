@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    thomas_utils (0.1.17)
+    thomas_utils (0.1.18)
       concurrent-ruby (~> 0.8)
       workers (~> 0.3)
 
