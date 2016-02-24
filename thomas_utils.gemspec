@@ -11,6 +11,6 @@ Gem::Specification.new do |s|
   s.files = Dir['{lib}/**/*.rb', 'bin/*', 'LICENSE.txt', '*.md']
   s.require_path = 'lib'
   s.homepage = 'https://www.github.com/thomasrogers03/thomas_utils'
-  s.add_runtime_dependency 'concurrent-ruby', '~> 0.8'
+  s.add_runtime_dependency 'concurrent-ruby', '~> 1.0.0'
   s.add_runtime_dependency 'workers', '~> 0.3'
 end
