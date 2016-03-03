@@ -41,17 +41,37 @@ module ThomasUtils
       self
     end
 
-    def then
+    def then(&block)
       observable = Concurrent::IVar.new
+      on_complete_then(observable, &block)
+      Observation.new(@executor, observable)
+    end
+
+    private
+
+    def on_complete_then(observable, &block)
       on_complete do |value, error|
         if error
           observable.fail(error)
         else
-          result = yield value
-          observable.set(result)
+          on_success_then(observable, value, &block)
         end
       end
-      Observation.new(@executor, observable)
+    end
+
+    def on_success_then(observable, value)
+      result = yield value
+      if result.is_a?(Observation)
+        result.on_complete do |child_result, child_error|
+          if child_error
+            observable.fail(child_error)
+          else
+            observable.set(child_result)
+          end
+        end
+      else
+        observable.set(result)
+      end
     end
 
   end

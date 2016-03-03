@@ -177,6 +177,37 @@ module ThomasUtils
           expect { subject.get }.to raise_error(error)
         end
       end
+
+      context 'when the block returns an Observation' do
+        let(:value_two) { Faker::Lorem.word }
+        let(:error_two) { nil }
+        let(:observable_two) { Concurrent::IVar.new }
+        let(:block) do
+          ->(value) do
+            Observation.new(executor, observable_two).then do
+              value_modifier.call(value)
+            end
+          end
+        end
+
+        before do
+          if error_two
+            observable_two.fail(error_two)
+          elsif value_two
+            observable_two.set(value_two)
+          end
+        end
+
+        its(:get) { is_expected.to eq(expected_result) }
+
+        context 'when the child observation fails' do
+          let(:error_two) { StandardError.new(Faker::Lorem.word) }
+
+          it 'should raise the error when resolved' do
+            expect { subject.get }.to raise_error(error_two)
+          end
+        end
+      end
     end
 
   end
