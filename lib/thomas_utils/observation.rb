@@ -24,5 +24,14 @@ module ThomasUtils
       self
     end
 
+    def on_complete
+      @observable.add_observer do |_, value, error|
+        @executor.post do
+          yield value, error
+        end
+      end
+      self
+    end
+
   end
 end

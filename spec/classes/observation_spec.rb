@@ -93,5 +93,44 @@ module ThomasUtils
       end
     end
 
+    describe '#on_complete' do
+      let(:result_list) { [] }
+      let(:result) { result_list.first }
+      let(:block) { ->(value, error) { result_list << [value, error] } }
+
+      subject { observation.on_complete(&block) }
+
+      it { is_expected.to eq(observation) }
+
+      it 'should call the block' do
+        subject
+        expect(result).to eq([value, nil])
+      end
+
+      context 'when the observation has failed' do
+        let(:error) { StandardError.new }
+
+        it 'should not call the block' do
+          subject
+          expect(result).to eq([nil, error])
+        end
+      end
+
+      context 'when the value is not immediately ready' do
+        let(:value) { nil }
+        let(:error) { nil }
+        let(:eventual_value) { Faker::Lorem.word }
+
+        before do
+          subject
+          observable.set(eventual_value)
+        end
+
+        it 'should call the block when complete' do
+          expect(result).to eq([eventual_value, nil])
+        end
+      end
+    end
+
   end
 end
