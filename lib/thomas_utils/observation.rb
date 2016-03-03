@@ -1,5 +1,8 @@
 module ThomasUtils
   class Observation
+    extend Forwardable
+
+    def_delegator :@observable, :value, :get
 
     def initialize(executor, observable)
       @executor = executor
@@ -30,6 +33,11 @@ module ThomasUtils
           yield value, error
         end
       end
+      self
+    end
+
+    def join
+      get
       self
     end
 

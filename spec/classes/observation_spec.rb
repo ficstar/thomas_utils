@@ -132,5 +132,22 @@ module ThomasUtils
       end
     end
 
+    describe '#get' do
+      subject { observation.get }
+
+      it { is_expected.to eq(value) }
+    end
+
+    describe '#join' do
+      subject { observation.join }
+
+      it { is_expected.to eq(observation) }
+
+      it 'should force the observation to complete' do
+        expect(observable).to receive(:value)
+        subject
+      end
+    end
+
   end
 end
