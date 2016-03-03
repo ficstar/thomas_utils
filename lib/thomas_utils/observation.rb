@@ -2,7 +2,7 @@ module ThomasUtils
   class Observation
     extend Forwardable
 
-    def_delegator :@observable, :value, :get
+    def_delegator :@observable, :value!, :get
 
     def initialize(executor, observable)
       @executor = executor
@@ -37,8 +37,21 @@ module ThomasUtils
     end
 
     def join
-      get
+      @observable.value
       self
+    end
+
+    def then
+      observable = Concurrent::IVar.new
+      on_complete do |value, error|
+        if error
+          observable.fail(error)
+        else
+          result = yield value
+          observable.set(result)
+        end
+      end
+      Observation.new(@executor, observable)
     end
 
   end

@@ -136,6 +136,15 @@ module ThomasUtils
       subject { observation.get }
 
       it { is_expected.to eq(value) }
+
+      context 'when the observation has failed' do
+        let(:error) { StandardError.new(Faker::Lorem.word) }
+
+        it 'should raise the error' do
+          expect { subject }.to raise_error(error)
+        end
+
+      end
     end
 
     describe '#join' do
@@ -146,6 +155,27 @@ module ThomasUtils
       it 'should force the observation to complete' do
         expect(observable).to receive(:value)
         subject
+      end
+    end
+
+    describe '#then' do
+      let(:salt) { Faker::Lorem.word }
+      let(:value_modifier) { ->(value) { Digest::MD5.base64digest(value + salt) } }
+      let(:expected_result) { value_modifier.call(value) }
+      let(:block) { ->(value) { value_modifier.call(value) } }
+
+      subject { observation.then(&block) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+
+      its(:get) { is_expected.to eq(expected_result) }
+
+      context 'when the observation has failed' do
+        let(:error) { StandardError.new(Faker::Lorem.word) }
+
+        it 'should raise the error when resolved' do
+          expect { subject.get }.to raise_error(error)
+        end
       end
     end
 
