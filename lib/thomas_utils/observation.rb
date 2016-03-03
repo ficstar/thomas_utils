@@ -15,5 +15,14 @@ module ThomasUtils
       self
     end
 
+    def on_failure
+      @observable.add_observer do |_, _, error|
+        @executor.post do
+          yield error if error
+        end
+      end
+      self
+    end
+
   end
 end
