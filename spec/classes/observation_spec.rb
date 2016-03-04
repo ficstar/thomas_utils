@@ -178,6 +178,19 @@ module ThomasUtils
         end
       end
 
+      context 'when the block raises an error' do
+        let(:block_error) { StandardError.new(Faker::Lorem.word) }
+        let(:block) { ->(_) { raise block_error } }
+
+        # an immediate executor would have caused this test to pass immediately,
+        # where as an asynchronous one causes a deadlock
+        let(:executor) { Concurrent::CachedThreadPool.new }
+
+        it 'should raise the error when resolved' do
+          expect { subject.get }.to raise_error(block_error)
+        end
+      end
+
       context 'when the block returns an Observation' do
         let(:value_two) { Faker::Lorem.word }
         let(:error_two) { nil }

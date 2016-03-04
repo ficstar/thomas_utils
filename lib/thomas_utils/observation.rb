@@ -72,6 +72,8 @@ module ThomasUtils
       else
         observable.set(result)
       end
+    rescue => error
+      observable.fail(error)
     end
 
   end
