@@ -5,6 +5,10 @@ module ThomasUtils
       new(Time.now, value, nil)
     end
 
+    def self.none
+      new(Time.now, nil, nil)
+    end
+
     def self.error(error)
       new(Time.now, nil, error)
     end

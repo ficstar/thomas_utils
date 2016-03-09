@@ -29,6 +29,12 @@ module ThomasUtils
       its(:get) { is_expected.to eq(value) }
     end
 
+    describe '.none' do
+      subject { Future.none }
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to be_nil }
+    end
+
     describe '.error' do
       let(:error) { StandardError.new(Faker::Lorem.sentence) }
       subject { Future.error(error) }

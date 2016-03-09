@@ -18,6 +18,10 @@ module ThomasUtils
         it { expect(ConstantVar.value(value)).to eq(ConstantVar.new(Time.now, value, nil)) }
       end
 
+      describe '.none' do
+        it { expect(ConstantVar.none).to eq(ConstantVar.new(Time.now, nil, nil)) }
+      end
+
       describe '.error' do
         it { expect(ConstantVar.error(error)).to eq(ConstantVar.new(Time.now, nil, error)) }
       end
