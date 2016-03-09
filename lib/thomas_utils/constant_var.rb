@@ -1,5 +1,5 @@
 module ThomasUtils
-  class ConstantVar < Struct.new(:time, :value, :error)
+  class ConstantVar < Struct.new(:time, :value, :reason)
 
     def self.value(value)
       new(Time.now, value, nil)
@@ -9,12 +9,17 @@ module ThomasUtils
       new(Time.now, nil, error)
     end
 
+    def value!
+      raise reason if reason
+      value
+    end
+
     def add_observer(observer = nil, func = :update, &block)
       if block
         observer = block
         func = :call
       end
-      observer.public_send(func, time, value, error)
+      observer.public_send(func, time, value, reason)
     end
 
     def with_observer(observer = nil, func = :update, &block)

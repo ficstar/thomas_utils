@@ -5,7 +5,7 @@ module ThomasUtils
 
     let(:time) { Time.now }
     let(:value) { Faker::Lorem.word }
-    let(:error) { Faker::Lorem.word }
+    let(:error) { StandardError.new(Faker::Lorem.word) }
     let(:observer) { double(:observer, update: nil) }
     let(:cvar) { ConstantVar.new(time, value, error) }
 
@@ -20,6 +20,28 @@ module ThomasUtils
 
       describe '.error' do
         it { expect(ConstantVar.error(error)).to eq(ConstantVar.new(Time.now, nil, error)) }
+      end
+    end
+
+    describe '#value' do
+      subject { cvar.value }
+      it { is_expected.to eq(value) }
+    end
+
+    describe '#reason' do
+      subject { cvar.reason }
+      it { is_expected.to eq(error) }
+    end
+
+    describe '#value!' do
+      let(:error) { nil }
+      subject { cvar.value! }
+
+      it { is_expected.to eq(value) }
+
+      context 'with an error' do
+        let(:error) { StandardError.new(Faker::Lorem.word) }
+        it { expect { subject }.to raise_error(error) }
       end
     end
 
