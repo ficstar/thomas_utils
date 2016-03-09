@@ -29,6 +29,12 @@ module ThomasUtils
       its(:get) { is_expected.to eq(value) }
     end
 
+    describe '.immediate' do
+      subject { Future.immediate { value } }
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq(value) }
+    end
+
     describe '.none' do
       subject { Future.none }
       it { is_expected.to be_a_kind_of(Observation) }

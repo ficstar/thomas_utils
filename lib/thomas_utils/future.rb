@@ -7,6 +7,10 @@ module ThomasUtils
       Observation.new(IMMEDIATE_EXECUTOR, ConstantVar.value(value))
     end
 
+    def self.immediate(&block)
+      none.then(&block)
+    end
+
     def self.none
       Observation.new(IMMEDIATE_EXECUTOR, ConstantVar.none)
     end
