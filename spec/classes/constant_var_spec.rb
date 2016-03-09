@@ -10,10 +10,10 @@ module ThomasUtils
 
     subject { ConstantVar.new(time, value, error) }
 
-    describe '#add_observer' do
+    shared_examples_for 'a method adding an observer' do |method|
       it 'should call the update method on the observer with the initialization params' do
         expect(observer).to receive(:update).with(time, value, error)
-        subject.add_observer(observer)
+        subject.public_send(method, observer)
       end
 
       context 'with a different update method' do
@@ -21,15 +21,27 @@ module ThomasUtils
 
         it 'should call that method' do
           expect(observer).to receive(update_method).with(time, value, error)
-          subject.add_observer(observer, update_method)
+          subject.public_send(method, observer, update_method)
         end
       end
 
       context 'when provided with a block' do
         it 'should call the block' do
           expect(observer).to receive(:update).with(time, value, error)
-          subject.add_observer { |time, value, error| observer.update(time, value, error) }
+          subject.public_send(method) { |time, value, error| observer.update(time, value, error) }
         end
+      end
+    end
+
+    describe '#add_observer' do
+      it_behaves_like 'a method adding an observer', :add_observer
+    end
+
+    describe '#with_observer' do
+      it_behaves_like 'a method adding an observer', :with_observer
+
+      it 'should return the observable' do
+        expect(subject.with_observer(observer)).to eq(subject)
       end
     end
 
