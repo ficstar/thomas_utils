@@ -23,9 +23,22 @@ module ThomasUtils
 
     it { is_expected.to be_a_kind_of(Observation) }
 
+    describe '.value' do
+      subject { Future.value(value) }
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq(value) }
+    end
+
+    describe '.error' do
+      let(:error) { StandardError.new(Faker::Lorem.sentence) }
+      subject { Future.error(error) }
+      it { is_expected.to be_a_kind_of(Observation) }
+      it { expect { subject.get }.to raise_error(error) }
+    end
 
     describe 'execution' do
       it { expect(Future::DEFAULT_EXECUTOR).to be_a_kind_of(Concurrent::CachedThreadPool) }
+      it { expect(Future::IMMEDIATE_EXECUTOR).to be_a_kind_of(Concurrent::ImmediateExecutor) }
 
       it 'should use execute within the default executor context' do
         expect(Future::DEFAULT_EXECUTOR).to receive(:post) do |&block|
