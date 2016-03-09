@@ -14,5 +14,17 @@ module ThomasUtils
       self
     end
 
+    def delete_observer(_)
+      raise NotImplementedError
+    end
+
+    def delete_observers
+      raise NotImplementedError
+    end
+
+    def count_observers
+      raise NotImplementedError
+    end
+
   end
 end

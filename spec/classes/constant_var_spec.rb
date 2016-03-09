@@ -7,8 +7,9 @@ module ThomasUtils
     let(:value) { Faker::Lorem.word }
     let(:error) { Faker::Lorem.word }
     let(:observer) { double(:observer, update: nil) }
+    let(:cvar) { ConstantVar.new(time, value, error) }
 
-    subject { ConstantVar.new(time, value, error) }
+    subject { cvar }
 
     shared_examples_for 'a method adding an observer' do |method|
       it 'should call the update method on the observer with the initialization params' do
@@ -43,6 +44,25 @@ module ThomasUtils
       it 'should return the observable' do
         expect(subject.with_observer(observer)).to eq(subject)
       end
+    end
+
+    shared_examples_for 'an unimplemented method' do
+      it { expect { subject }.to raise_error(NotImplementedError) }
+    end
+
+    describe '#delete_observer' do
+      subject { cvar.delete_observer(observer) }
+      it_behaves_like 'an unimplemented method'
+    end
+
+    describe '#delete_observers' do
+      subject { cvar.delete_observers }
+      it_behaves_like 'an unimplemented method'
+    end
+
+    describe '#count_observers' do
+      subject { cvar.count_observers }
+      it_behaves_like 'an unimplemented method'
     end
 
   end
