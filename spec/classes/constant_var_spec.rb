@@ -11,6 +11,18 @@ module ThomasUtils
 
     subject { cvar }
 
+    describe 'helper methods' do
+      around { |example| Timecop.freeze { example.run } }
+
+      describe '.value' do
+        it { expect(ConstantVar.value(value)).to eq(ConstantVar.new(Time.now, value, nil)) }
+      end
+
+      describe '.error' do
+        it { expect(ConstantVar.error(error)).to eq(ConstantVar.new(Time.now, nil, error)) }
+      end
+    end
+
     shared_examples_for 'a method adding an observer' do |method|
       it 'should call the update method on the observer with the initialization params' do
         expect(observer).to receive(:update).with(time, value, error)

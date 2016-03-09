@@ -79,6 +79,7 @@ GEM
     spoon (0.0.4)
       ffi
     thor (0.19.1)
+    timecop (0.8.0)
     workers (0.6.0)
 
 PLATFORMS
@@ -95,6 +96,7 @@ DEPENDENCIES
   rspec
   rspec-its
   thomas_utils!
+  timecop
   workers
 
 BUNDLED WITH

@@ -1,6 +1,14 @@
 module ThomasUtils
   class ConstantVar < Struct.new(:time, :value, :error)
 
+    def self.value(value)
+      new(Time.now, value, nil)
+    end
+
+    def self.error(error)
+      new(Time.now, nil, error)
+    end
+
     def add_observer(observer = nil, func = :update, &block)
       if block
         observer = block
