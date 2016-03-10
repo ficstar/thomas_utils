@@ -286,5 +286,24 @@ module ThomasUtils
       end
     end
 
+    describe '#none_fallback' do
+      let(:fallback) { SecureRandom.uuid }
+      let(:block) { ->() { fallback } }
+
+      subject { observation.none_fallback(&block) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq(value) }
+
+      context 'when the value is nil' do
+        let(:value) { nil }
+
+        before { observable.set(nil) }
+
+        its(:get) { is_expected.to eq(fallback) }
+      end
+
+    end
+
   end
 end

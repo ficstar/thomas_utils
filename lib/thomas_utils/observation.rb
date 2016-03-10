@@ -45,6 +45,12 @@ module ThomasUtils
       successive(:on_complete_then, &block)
     end
 
+    def none_fallback
+      self.then do |result|
+        result || yield
+      end
+    end
+
     def fallback(&block)
       successive(:on_complete_fallback, &block)
     end
