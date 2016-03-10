@@ -302,7 +302,99 @@ module ThomasUtils
 
         its(:get) { is_expected.to eq(fallback) }
       end
+    end
 
+    describe '#ensure' do
+      let(:ensure_observer) { double(:observer, call: nil) }
+      let(:block) { ->(value, error) { ensure_observer.call(value, error) } }
+
+      subject { observation.ensure(&block) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq(value) }
+
+      it 'should call the provided block with the value' do
+        expect(ensure_observer).to receive(:call).with(value, nil)
+        subject
+      end
+
+      context 'when the observation has failed' do
+        let(:error) { StandardError.new(Faker::Lorem.sentence) }
+
+        it { expect { subject.get }.to raise_error(error) }
+
+        it 'should call the provided block with the error' do
+          expect(ensure_observer).to receive(:call).with(nil, error)
+          subject
+        end
+      end
+
+      context 'when the block has not completed' do
+        let(:observable_two) { Concurrent::IVar.new }
+        let(:block) do
+          ->(value, error) do
+            Observation.new(executor, observable_two).then do
+              ensure_observer.call(value, error)
+            end
+          end
+        end
+
+        # see #then
+        let(:executor) { Concurrent::CachedThreadPool.new }
+
+        it 'should wait for the block to complete' do
+          result = subject
+          expect(ensure_observer).to receive(:call)
+          observable_two.set(nil)
+          result.get
+        end
+      end
+
+      context 'when the block raises an error' do
+        let(:block_error) { StandardError.new(Faker::Lorem.word) }
+        let(:block) { ->(_, _) { raise block_error } }
+
+        # see #then
+        let(:executor) { Concurrent::CachedThreadPool.new }
+
+        it 'should raise the error when resolved' do
+          expect { subject.get }.to raise_error(block_error)
+        end
+      end
+
+      context 'when the block returns an Observation' do
+        let(:value_two) { Faker::Lorem.word }
+        let(:error_two) { nil }
+        let(:observable_two) { Concurrent::IVar.new }
+        let(:block) do
+          ->(value, error) do
+            Observation.new(executor, observable_two).then do
+              ensure_observer.call(value, error)
+            end
+          end
+        end
+
+        before do
+          if error_two
+            observable_two.fail(error_two)
+          elsif value_two
+            observable_two.set(value_two)
+          end
+        end
+
+        it 'should call the provided block with the value' do
+          expect(ensure_observer).to receive(:call).with(value, nil)
+          subject
+        end
+
+        context 'when the child observation fails' do
+          let(:error_two) { StandardError.new(Faker::Lorem.word) }
+
+          it 'should raise the error when resolved' do
+            expect { subject.get }.to raise_error(error_two)
+          end
+        end
+      end
     end
 
   end

@@ -55,6 +55,10 @@ module ThomasUtils
       successive(:on_complete_fallback, &block)
     end
 
+    def ensure(&block)
+      successive(:on_complete_ensure, &block)
+    end
+
     private
 
     def successive(method, &block)
@@ -87,11 +91,7 @@ module ThomasUtils
       result = yield value
       if result.is_a?(Observation)
         result.on_complete do |child_result, child_error|
-          if child_error
-            observable.fail(child_error)
-          else
-            observable.set(child_result)
-          end
+          ensure_then(child_error, observable, child_result)
         end
       else
         observable.set(result)
@@ -101,6 +101,41 @@ module ThomasUtils
     end
 
     alias :on_failure_fallback :on_success_then
+
+    def on_complete_ensure(observable)
+      on_complete do |value, error|
+        begin
+          result = yield value, error
+          if result.is_a?(Observation)
+            ensure_complete_then(error, observable, result, value)
+          else
+            ensure_then(error, observable, value)
+          end
+        rescue => child_error
+          observable.fail(child_error)
+        end
+      end
+    end
+
+    def ensure_complete_then(error, observable, result, value)
+      result.on_complete do |_, child_error|
+        if child_error
+          observable.fail(child_error)
+        elsif error
+          observable.fail(error)
+        else
+          observable.set(value)
+        end
+      end
+    end
+
+    def ensure_then(error, observable, value)
+      if error
+        observable.fail(error)
+      else
+        observable.set(value)
+      end
+    end
 
   end
 end
