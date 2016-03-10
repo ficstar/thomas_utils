@@ -42,18 +42,20 @@ module ThomasUtils
     end
 
     def then(&block)
-      observable = Concurrent::IVar.new
-      on_complete_then(observable, &block)
-      Observation.new(@executor, observable)
+      successive(:on_complete_then, &block)
     end
 
     def fallback(&block)
-      observable = Concurrent::IVar.new
-      on_complete_fallback(observable, &block)
-      Observation.new(@executor, observable)
+      successive(:on_complete_fallback, &block)
     end
 
     private
+
+    def successive(method, &block)
+      observable = Concurrent::IVar.new
+      send(method, observable, &block)
+      Observation.new(@executor, observable)
+    end
 
     def on_complete_then(observable, &block)
       on_complete do |value, error|
