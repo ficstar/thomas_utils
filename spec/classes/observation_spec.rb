@@ -223,5 +223,68 @@ module ThomasUtils
       end
     end
 
+    describe '#fallback' do
+      let(:error_msg) { Faker::Lorem.sentence }
+      let(:error) { StandardError.new(error_msg) }
+      let(:error_modifier) { ->(error) { error.message } }
+      let(:block) { ->(error) { error_modifier.call(error) } }
+
+      subject { observation.fallback(&block) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq(error_msg) }
+
+      context 'when the observation has succeeded' do
+        let(:error) { nil }
+
+        it 'should raise the error when resolved' do
+          expect(subject.get).to eq(value)
+        end
+      end
+
+      context 'when the block raises an error' do
+        let(:block_error) { StandardError.new(Faker::Lorem.word) }
+        let(:block) { ->(_) { raise block_error } }
+
+        # see #then
+        let(:executor) { Concurrent::CachedThreadPool.new }
+
+        it 'should raise the error when resolved' do
+          expect { subject.get }.to raise_error(block_error)
+        end
+      end
+
+      context 'when the block returns an Observation' do
+        let(:value_two) { Faker::Lorem.word }
+        let(:error_two) { nil }
+        let(:observable_two) { Concurrent::IVar.new }
+        let(:block) do
+          ->(error) do
+            Observation.new(executor, observable_two).then do
+              error_modifier.call(error)
+            end
+          end
+        end
+
+        before do
+          if error_two
+            observable_two.fail(error_two)
+          elsif value_two
+            observable_two.set(value_two)
+          end
+        end
+
+        its(:get) { is_expected.to eq(error_msg) }
+
+        context 'when the child observation fails' do
+          let(:error_two) { StandardError.new(Faker::Lorem.word) }
+
+          it 'should raise the error when resolved' do
+            expect { subject.get }.to raise_error(error_two)
+          end
+        end
+      end
+    end
+
   end
 end

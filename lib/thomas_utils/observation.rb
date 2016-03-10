@@ -47,6 +47,12 @@ module ThomasUtils
       Observation.new(@executor, observable)
     end
 
+    def fallback(&block)
+      observable = Concurrent::IVar.new
+      on_complete_fallback(observable, &block)
+      Observation.new(@executor, observable)
+    end
+
     private
 
     def on_complete_then(observable, &block)
@@ -55,6 +61,16 @@ module ThomasUtils
           observable.fail(error)
         else
           on_success_then(observable, value, &block)
+        end
+      end
+    end
+
+    def on_complete_fallback(observable, &block)
+      on_complete do |value, error|
+        if error
+          on_failure_fallback(error, observable, &block)
+        else
+          observable.set(value)
         end
       end
     end
@@ -74,6 +90,25 @@ module ThomasUtils
       end
     rescue => error
       observable.fail(error)
+    end
+
+    def on_failure_fallback(error, observable)
+      begin
+        result = yield error
+        if result.is_a?(Observation)
+          result.on_complete do |child_result, child_error|
+            if child_error
+              observable.fail(child_error)
+            else
+              observable.set(child_result)
+            end
+          end
+        else
+          observable.set(result)
+        end
+      rescue => child_error
+        observable.fail(child_error)
+      end
     end
 
   end
