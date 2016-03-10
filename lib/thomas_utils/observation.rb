@@ -68,7 +68,7 @@ module ThomasUtils
     def on_complete_fallback(observable, &block)
       on_complete do |value, error|
         if error
-          on_failure_fallback(error, observable, &block)
+          on_failure_fallback(observable, error, &block)
         else
           observable.set(value)
         end
@@ -92,24 +92,7 @@ module ThomasUtils
       observable.fail(error)
     end
 
-    def on_failure_fallback(error, observable)
-      begin
-        result = yield error
-        if result.is_a?(Observation)
-          result.on_complete do |child_result, child_error|
-            if child_error
-              observable.fail(child_error)
-            else
-              observable.set(child_result)
-            end
-          end
-        else
-          observable.set(result)
-        end
-      rescue => child_error
-        observable.fail(child_error)
-      end
-    end
+    alias :on_failure_fallback :on_success_then
 
   end
 end
