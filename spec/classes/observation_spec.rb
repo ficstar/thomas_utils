@@ -189,6 +189,14 @@ module ThomasUtils
         it 'should raise the error when resolved' do
           expect { subject.get }.to raise_error(block_error)
         end
+
+        context 'when it is not a StandardError' do
+          let(:block_error) { Interrupt.new }
+
+          it 'should raise the error when resolved' do
+            expect { subject.get }.to raise_error(block_error)
+          end
+        end
       end
 
       context 'when the block returns an Observation' do
@@ -359,6 +367,14 @@ module ThomasUtils
 
         it 'should raise the error when resolved' do
           expect { subject.get }.to raise_error(block_error)
+        end
+
+        context 'when it is not a StandardError' do
+          let(:block_error) { Interrupt.new }
+
+          it 'should raise the error when resolved' do
+            expect { subject.get }.to raise_error(block_error)
+          end
         end
       end
 

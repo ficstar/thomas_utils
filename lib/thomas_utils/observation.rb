@@ -96,7 +96,7 @@ module ThomasUtils
       else
         observable.set(result)
       end
-    rescue => error
+    rescue Exception => error
       observable.fail(error)
     end
 
@@ -111,7 +111,7 @@ module ThomasUtils
           else
             ensure_then(error, observable, value)
           end
-        rescue => child_error
+        rescue Exception => child_error
           observable.fail(child_error)
         end
       end
