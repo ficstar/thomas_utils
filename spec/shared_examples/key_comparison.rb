@@ -10,12 +10,12 @@ shared_examples_for 'a method comparing two keys' do |method|
     it { is_expected.to eq(true) }
 
     context 'when the value of one is different from the other' do
-      let(:rhs) { klass.new(key, Faker::Lorem.word) }
+      let(:rhs) { klass.new(key, Faker::Lorem.sentence) }
       it { is_expected.to eq(false) }
     end
 
     context 'when the key of one is different from the other' do
-      let(:rhs) { klass.new(Faker::Lorem.word, value) }
+      let(:rhs) { klass.new(Faker::Lorem.sentence, value) }
       it { is_expected.to eq(false) }
     end
 
