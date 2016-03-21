@@ -464,5 +464,56 @@ module ThomasUtils
       end
     end
 
+    describe '#on_failure_ensure' do
+      let(:error) { StandardError.new(Faker::Lorem.sentence) }
+      let!(:callback) { double(:callback, call: nil) }
+      let(:block) { ->(error) { callback.call(error) } }
+
+      subject { observation.on_failure_ensure(&block) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+      it { expect { subject.get }.to raise_error(error) }
+      it { is_expected.not_to eq(observation) }
+
+      it 'should ensure the callback gets called' do
+        expect(callback).to receive(:call).with(error)
+        subject.get rescue nil
+      end
+
+      context 'when the block itself returns an Observation' do
+        let(:value_two) { Faker::Lorem.words }
+        let!(:observable_two) { Concurrent::IVar.new.set(value_two) }
+        let(:block) do
+          ->(error) do
+            Observation.new(executor, observable_two).then do
+              sleep 0.01
+              callback.call(error)
+            end
+          end
+        end
+
+        # see #then
+        let(:executor) { Concurrent::CachedThreadPool.new }
+
+        it { expect { subject.get }.to raise_error(error) }
+
+        it 'should ensure the callback gets called before resolving' do
+          expect(callback).to receive(:call).with(error)
+          subject.get rescue nil
+        end
+      end
+
+      context 'with no error' do
+        let(:error) { nil }
+
+        its(:get) { is_expected.to eq(value) }
+
+        it 'should not call the callback' do
+          expect(callback).not_to receive(:call)
+          subject.get
+        end
+      end
+    end
+
   end
 end

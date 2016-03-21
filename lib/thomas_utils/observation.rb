@@ -70,6 +70,17 @@ module ThomasUtils
       end
     end
 
+    def on_failure_ensure(&block)
+      self.fallback do |error|
+        value = block.call(error)
+        if value.is_a?(Observation)
+          value.then { raise error }
+        else
+          raise error
+        end
+      end
+    end
+
     private
 
     def successive(method, &block)
