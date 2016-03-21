@@ -313,7 +313,7 @@ module ThomasUtils
     end
 
     describe '#ensure' do
-      let(:ensure_observer) { double(:observer, call: nil) }
+      let!(:ensure_observer) { double(:observer, call: nil) }
       let(:block) { ->(value, error) { ensure_observer.call(value, error) } }
 
       subject { observation.ensure(&block) }
@@ -338,10 +338,11 @@ module ThomasUtils
       end
 
       context 'when the block has not completed' do
-        let(:observable_two) { Concurrent::IVar.new }
+        let!(:observable_two) { Concurrent::IVar.new.set(nil) }
         let(:block) do
           ->(value, error) do
             Observation.new(executor, observable_two).then do
+              sleep 0.01
               ensure_observer.call(value, error)
             end
           end
@@ -350,11 +351,11 @@ module ThomasUtils
         # see #then
         let(:executor) { Concurrent::CachedThreadPool.new }
 
+        its(:get) { is_expected.to eq(value) }
+
         it 'should wait for the block to complete' do
-          result = subject
           expect(ensure_observer).to receive(:call)
-          observable_two.set(nil)
-          result.get
+          subject.get
         end
       end
 
@@ -414,7 +415,7 @@ module ThomasUtils
     end
 
     describe '#on_success_ensure' do
-      let(:callback) { double(:callback, call: nil) }
+      let!(:callback) { double(:callback, call: nil) }
       let(:block) { ->(value) { callback.call(value) } }
 
       subject { observation.on_success_ensure(&block) }
@@ -430,7 +431,7 @@ module ThomasUtils
 
       context 'when the block itself returns an Observation' do
         let(:value_two) { Faker::Lorem.words }
-        let(:observable_two) { Concurrent::IVar.new.set(value_two) }
+        let!(:observable_two) { Concurrent::IVar.new.set(value_two) }
         let(:block) do
           ->(value) do
             Observation.new(executor, observable_two).then do
@@ -442,6 +443,8 @@ module ThomasUtils
 
         # see #then
         let(:executor) { Concurrent::CachedThreadPool.new }
+
+        its(:get) { is_expected.to eq(value) }
 
         it 'should ensure the callback gets called before resolving' do
           expect(callback).to receive(:call).with(value)
