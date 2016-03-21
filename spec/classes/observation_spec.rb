@@ -413,5 +413,53 @@ module ThomasUtils
       end
     end
 
+    describe '#on_success_ensure' do
+      let(:callback) { double(:callback, call: nil) }
+      let(:block) { ->(value) { callback.call(value) } }
+
+      subject { observation.on_success_ensure(&block) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq(value) }
+      it { is_expected.not_to eq(observation) }
+
+      it 'should ensure the callback gets called' do
+        expect(callback).to receive(:call).with(value)
+        subject.get
+      end
+
+      context 'when the block itself returns an Observation' do
+        let(:value_two) { Faker::Lorem.words }
+        let(:observable_two) { Concurrent::IVar.new.set(value_two) }
+        let(:block) do
+          ->(value) do
+            Observation.new(executor, observable_two).then do
+              sleep 0.01
+              callback.call(value)
+            end
+          end
+        end
+
+        # see #then
+        let(:executor) { Concurrent::CachedThreadPool.new }
+
+        it 'should ensure the callback gets called before resolving' do
+          expect(callback).to receive(:call).with(value)
+          subject.get
+        end
+      end
+
+      context 'with an error' do
+        let(:error) { StandardError.new(Faker::Lorem.sentence) }
+
+        it { expect { subject.get }.to raise_error(error) }
+
+        it 'should not call the callback' do
+          expect(callback).not_to receive(:call)
+          subject.get rescue nil
+        end
+      end
+    end
+
   end
 end

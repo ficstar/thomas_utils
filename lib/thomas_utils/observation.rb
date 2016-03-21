@@ -59,6 +59,17 @@ module ThomasUtils
       successive(:on_complete_ensure, &block)
     end
 
+    def on_success_ensure(&block)
+      self.then do |result|
+        value = block.call(result)
+        if value.is_a?(Observation)
+          value.then { result }
+        else
+          result
+        end
+      end
+    end
+
     private
 
     def successive(method, &block)
