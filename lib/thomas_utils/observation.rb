@@ -73,10 +73,11 @@ module ThomasUtils
     def on_failure_ensure(&block)
       self.fallback do |error|
         result = block.call(error)
+        error_observation = Observation.new(@executor, ConstantVar.error(error))
         if result_is_observation?(result)
-          result.then { raise error }
+          result.then { error_observation }
         else
-          raise error
+          error_observation
         end
       end
     end
