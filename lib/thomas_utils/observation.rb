@@ -61,9 +61,9 @@ module ThomasUtils
 
     def on_success_ensure(&block)
       self.then do |result|
-        value = block.call(result)
-        if value.is_a?(Observation)
-          value.then { result }
+        child_result = block.call(result)
+        if result_is_observation?(child_result)
+          child_result.then { result }
         else
           result
         end
@@ -72,9 +72,9 @@ module ThomasUtils
 
     def on_failure_ensure(&block)
       self.fallback do |error|
-        value = block.call(error)
-        if value.is_a?(Observation)
-          value.then { raise error }
+        result = block.call(error)
+        if result_is_observation?(result)
+          result.then { raise error }
         else
           raise error
         end
@@ -111,7 +111,7 @@ module ThomasUtils
 
     def on_success_then(observable, value)
       result = yield value
-      if result.is_a?(Observation)
+      if result_is_observation?(result)
         result.on_complete do |child_result, child_error|
           ensure_then(child_error, observable, child_result)
         end
@@ -128,7 +128,7 @@ module ThomasUtils
       on_complete do |value, error|
         begin
           result = yield value, error
-          if result.is_a?(Observation)
+          if result_is_observation?(result)
             ensure_complete_then(error, observable, result, value)
           else
             ensure_then(error, observable, value)
@@ -159,5 +159,8 @@ module ThomasUtils
       end
     end
 
+    def result_is_observation?(result)
+      result.is_a?(Observation)
+    end
   end
 end
