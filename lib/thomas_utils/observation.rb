@@ -160,7 +160,7 @@ module ThomasUtils
     end
 
     def result_is_observation?(result)
-      result.is_a?(Observation)
+      result.respond_to?(:on_complete) && result.respond_to?(:then)
     end
   end
 end

@@ -3,6 +3,34 @@ require 'rspec'
 module ThomasUtils
   describe Observation do
 
+    let(:complete_mock_observation_klass) do
+      Struct.new(:value, :error) do
+        def on_complete
+          yield value, error
+          self
+        end
+
+        def then
+          yield value unless error
+        end
+      end
+    end
+    let(:then_only_mock_observation_klass) do
+      Struct.new(:value, :error) do
+        def then
+          yield value unless error
+        end
+      end
+    end
+    let(:complete_only_mock_observation_klass) do
+      Struct.new(:value, :error) do
+        def on_complete
+          yield value, error
+          self
+        end
+      end
+    end
+
     let(:value) { Faker::Lorem.word }
     let(:error) { nil }
     let(:executor) { Concurrent::ImmediateExecutor.new }
@@ -220,6 +248,24 @@ module ThomasUtils
         end
 
         its(:get) { is_expected.to eq(expected_result) }
+
+        context 'with a return value responding to the successive interface' do
+          let(:mock_observation_klass) { complete_mock_observation_klass }
+          let(:mock_observation) { mock_observation_klass.new(value_modifier.call(value), error) }
+          let(:block) { ->(_) { mock_observation } }
+
+          its(:get) { is_expected.to eq(expected_result) }
+
+          context 'when missing #on_complete' do
+            let(:mock_observation_klass) { then_only_mock_observation_klass }
+            its(:get) { is_expected.to eq(mock_observation) }
+          end
+
+          context 'when missing #then' do
+            let(:mock_observation_klass) { complete_only_mock_observation_klass }
+            its(:get) { is_expected.to eq(mock_observation) }
+          end
+        end
 
         context 'when the child observation fails' do
           let(:error_two) { StandardError.new(Faker::Lorem.word) }
