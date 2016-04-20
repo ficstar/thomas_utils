@@ -48,6 +48,31 @@ module ThomasUtils
       it { expect { subject.get }.to raise_error(error) }
     end
 
+    describe '.all' do
+      let(:future) { Future.value(value) }
+      let(:list_of_futures) { [future] }
+
+      subject { Future.all(list_of_futures) }
+
+      it { is_expected.to be_a_kind_of(Observation) }
+      its(:get) { is_expected.to eq([value]) }
+
+      context 'with multiple futures' do
+        let(:value_two) { Faker::Lorem.sentence }
+        let(:future_two) { Future.value(value_two) }
+        let(:list_of_futures) { [future, future_two] }
+
+        its(:get) { is_expected.to eq([value, value_two]) }
+      end
+
+      context 'with an error' do
+        let(:error) { StandardError.new(Faker::Lorem.sentence) }
+        let(:future) { Future.error(error) }
+
+        it { expect { subject.get }.to raise_error(error) }
+      end
+    end
+
     describe 'execution' do
       it { expect(Future::DEFAULT_EXECUTOR).to be_a_kind_of(Concurrent::CachedThreadPool) }
       it { expect(Future::IMMEDIATE_EXECUTOR).to be_a_kind_of(Concurrent::ImmediateExecutor) }

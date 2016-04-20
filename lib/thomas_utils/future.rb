@@ -19,6 +19,29 @@ module ThomasUtils
       Observation.new(IMMEDIATE_EXECUTOR, ConstantVar.error(error))
     end
 
+    def self.all(observations)
+      observable = Concurrent::IVar.new
+      left = observations.count
+      buffer = [nil] * left
+      mutex = Mutex.new
+      observations.each_with_index do |observation, index|
+        observation.on_complete do |value, error|
+          if error
+            observable.fail(error)
+          else
+            buffer[index] = value
+            done = false
+            mutex.synchronize do
+              left -= 1
+              done = !!left.zero?
+            end
+            observable.set(buffer) if done
+          end
+        end
+      end
+      Observation.new(DEFAULT_EXECUTOR, observable)
+    end
+
     def initialize(options = {}, &block)
       executor = options.fetch(:executor) { DEFAULT_EXECUTOR }
       observable = Concurrent::Future.execute(executor: executor, &block)
