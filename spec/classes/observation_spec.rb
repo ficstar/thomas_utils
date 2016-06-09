@@ -45,6 +45,22 @@ module ThomasUtils
       end
     end
 
+    describe '#initialized_at' do
+      subject { observation.initialized_at }
+
+      around { |example| Timecop.freeze { example.run } }
+
+      it { is_expected.to eq(Time.now) }
+
+      context 'with a specific initialization time provided' do
+        let(:minutes_ago) { rand(1..10) }
+        let(:initialized_at) { Time.now - minutes_ago * 60 }
+        let(:observation) { Observation.new(executor, observable, initialized_at) }
+
+        it { is_expected.to eq(initialized_at) }
+      end
+    end
+
     describe '#on_success' do
       let(:result) { [] }
       let(:block) { ->(value) { result << value } }

@@ -3,10 +3,12 @@ module ThomasUtils
     extend Forwardable
 
     def_delegator :@observable, :value!, :get
+    attr_reader :initialized_at
 
-    def initialize(executor, observable)
+    def initialize(executor, observable, initialized_at = Time.now)
       @executor = executor
       @observable = observable
+      @initialized_at = initialized_at
     end
 
     def on_success
