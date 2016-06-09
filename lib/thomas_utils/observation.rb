@@ -31,6 +31,10 @@ module ThomasUtils
       self
     end
 
+    def on_timed
+      on_complete { yield @initialized_at, @resolved_at, (@resolved_at - @initialized_at) }
+    end
+
     def on_complete
       @observable.add_observer do |_, value, error|
         @executor.post do
