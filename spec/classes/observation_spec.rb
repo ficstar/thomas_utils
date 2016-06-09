@@ -166,7 +166,7 @@ module ThomasUtils
 
       it { is_expected.to eq(observation) }
 
-      it 'should call the block' do
+      it 'should call the block with the value an NO error' do
         subject
         expect(result).to eq([value, nil])
       end
@@ -174,7 +174,7 @@ module ThomasUtils
       context 'when the observation has failed' do
         let(:error) { StandardError.new }
 
-        it 'should not call the block' do
+        it 'should call the block with NO value and the error' do
           subject
           expect(result).to eq([nil, error])
         end
