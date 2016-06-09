@@ -8,7 +8,9 @@ module ThomasUtils
     end
 
     def self.immediate(&block)
-      none.then(&block)
+      start_time = Time.now
+      observable = ConstantVar.value(block.call)
+      Observation.new(IMMEDIATE_EXECUTOR, observable, start_time)
     end
 
     def self.none

@@ -30,9 +30,24 @@ module ThomasUtils
     end
 
     describe '.immediate' do
-      subject { Future.immediate { value } }
+      let(:immediate_block) { ->() { value } }
+      subject { Future.immediate(&immediate_block) }
       it { is_expected.to be_a_kind_of(Observation) }
       its(:get) { is_expected.to eq(value) }
+
+      describe 'timing the block' do
+        let(:expected_start_time) { Time.now }
+        let(:expected_resolution_time) { expected_start_time + 5 * 60 }
+        let(:mock_observation) { double(:observation, get: value) }
+
+        it 'should time the block properly' do
+          expect(Time).to receive(:now).and_return(expected_start_time).ordered
+          expect(immediate_block).to receive(:call).and_call_original.ordered
+          allow(Time).to receive(:now).and_return(expected_resolution_time).ordered
+          expect(Observation).to receive(:new).with(anything, anything, expected_start_time).and_return(mock_observation).ordered
+          subject.get
+        end
+      end
     end
 
     describe '.none' do
