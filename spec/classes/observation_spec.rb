@@ -61,6 +61,26 @@ module ThomasUtils
       end
     end
 
+    describe '#resolved_at' do
+      let(:observable) { double(:observable, set: nil, add_observer: nil) }
+
+      subject { observation.resolved_at }
+
+      it { is_expected.to be_nil }
+
+      context 'when the observable has been resolved' do
+        let(:resolved_at) { Time.now }
+
+        before do
+          allow(observable).to receive(:add_observer) do |&block|
+            block[resolved_at, nil, nil]
+          end
+        end
+
+        it { is_expected.to eq(resolved_at) }
+      end
+    end
+
     describe '#on_success' do
       let(:result) { [] }
       let(:block) { ->(value) { result << value } }
@@ -197,7 +217,7 @@ module ThomasUtils
       it { is_expected.to eq(observation) }
 
       it 'should force the observation to complete' do
-        expect(observable).to receive(:value)
+        expect(observable).to receive(:value).at_least(1).times
         subject
       end
     end
