@@ -22,6 +22,7 @@ module ThomasUtils
     end
 
     def self.all(observations)
+      initialized_at = observations.map(&:initialized_at).min
       observable = Concurrent::IVar.new
       left = observations.count
       buffer = [nil] * left
@@ -41,7 +42,7 @@ module ThomasUtils
           end
         end
       end
-      Observation.new(DEFAULT_EXECUTOR, observable)
+      Observation.new(DEFAULT_EXECUTOR, observable, initialized_at)
     end
 
     def initialize(options = {}, &block)

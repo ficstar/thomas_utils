@@ -86,6 +86,28 @@ module ThomasUtils
 
         it { expect { subject.get }.to raise_error(error) }
       end
+
+      describe 'timing the futures' do
+        let(:initialized_at) { Time.now }
+        let(:future) { Observation.new(Future::IMMEDIATE_EXECUTOR, ConstantVar.value(value), initialized_at) }
+
+        its(:initialized_at) { is_expected.to eq(initialized_at) }
+
+        context 'with multiple futures' do
+          let(:initialized_at_two) { initialized_at - 3 }
+          let(:value_two) { Faker::Lorem.sentence }
+          let(:future_two) { Observation.new(Future::IMMEDIATE_EXECUTOR, ConstantVar.value(value_two), initialized_at_two) }
+          let(:list_of_futures) { [future, future_two] }
+
+          its(:initialized_at) { is_expected.to eq(initialized_at_two) }
+
+          context 'when the other future is behind' do
+            let(:initialized_at_two) { initialized_at + 71 }
+
+            its(:initialized_at) { is_expected.to eq(initialized_at) }
+          end
+        end
+      end
     end
 
     describe 'execution' do
