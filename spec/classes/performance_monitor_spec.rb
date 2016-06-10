@@ -35,12 +35,24 @@ module ThomasUtils
 
       subject { logger.log }
 
-      before do
-        monitor.monitor(sender, method, monitor_name, future)
-        future.get
+      context 'with an observation' do
+        before do
+          monitor.monitor(sender, method, monitor_name, future)
+          future.get
+        end
+
+        it { is_expected.to include(log_item) }
       end
 
-      it { is_expected.to include(log_item) }
+      context 'with a block' do
+        before do
+          allow(Time).to receive(:now).and_return(initialized_at, resolved_at)
+          monitor.monitor(sender, method, monitor_name) {  }
+          future.get
+        end
+
+        it { is_expected.to include(log_item) }
+      end
     end
   end
 end

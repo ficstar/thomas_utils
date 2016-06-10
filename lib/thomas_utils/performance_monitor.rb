@@ -5,7 +5,9 @@ module ThomasUtils
       @logger = logger
     end
 
-    def monitor(sender, method, monitor_name, item)
+    def monitor(sender, method, monitor_name, item = nil, &block)
+      item = Future.immediate(&block) unless item
+
       item.on_timed do |started_at, completed_at, duration|
         performance_message = {
             sender: sender,
