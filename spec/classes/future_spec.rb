@@ -35,6 +35,21 @@ module ThomasUtils
       it { is_expected.to be_a_kind_of(Observation) }
       its(:get) { is_expected.to eq(value) }
 
+      context 'when the block raises an error' do
+        let(:error) { StandardError.new(Faker::Lorem.sentence) }
+        let(:immediate_block) { ->() { raise error } }
+
+        it { expect { subject }.not_to raise_error }
+        it { expect { subject.get }.to raise_error(error) }
+
+        context 'with a non-standard error' do
+          let(:error) { Interrupt }
+
+          it { expect { subject }.not_to raise_error }
+          it { expect { subject.get }.to raise_error(error) }
+        end
+      end
+
       describe 'timing the block' do
         let(:expected_start_time) { Time.now }
         let(:expected_resolution_time) { expected_start_time + 5 * 60 }

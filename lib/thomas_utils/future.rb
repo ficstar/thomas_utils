@@ -9,7 +9,11 @@ module ThomasUtils
 
     def self.immediate(&block)
       start_time = Time.now
-      observable = ConstantVar.value(block.call)
+      observable = begin
+        ConstantVar.value(block.call)
+      rescue Exception => error
+        ConstantVar.error(error)
+      end
       Observation.new(IMMEDIATE_EXECUTOR, observable, start_time)
     end
 
