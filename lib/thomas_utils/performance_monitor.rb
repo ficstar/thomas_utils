@@ -8,14 +8,15 @@ module ThomasUtils
     def monitor(sender, method, monitor_name, item = nil, &block)
       item = Future.immediate(&block) unless item
 
-      item.on_timed do |started_at, completed_at, duration|
+      item.on_complete do |_, error|
         performance_message = {
             sender: sender,
             method: method,
             name: monitor_name,
-            started_at: started_at,
-            completed_at: completed_at,
-            duration: duration,
+            started_at: item.initialized_at,
+            completed_at: item.resolved_at,
+            duration: item.resolved_at - item.initialized_at,
+            error: error,
         }
         @logger.write(performance_message)
       end

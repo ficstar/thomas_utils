@@ -20,8 +20,9 @@ module ThomasUtils
       let(:initialized_at) { Time.now }
       let(:duration) { rand * 60 }
       let(:resolved_at) { initialized_at + duration }
-      let(:const_var) { ConstantVar.new(resolved_at, nil, nil) }
+      let(:const_var) { ConstantVar.new(resolved_at, nil, error) }
       let(:future) { Observation.new(Future::IMMEDIATE_EXECUTOR, const_var, initialized_at) }
+      let(:error) { nil }
       let(:log_item) do
         {
             sender: sender,
@@ -30,6 +31,7 @@ module ThomasUtils
             started_at: initialized_at,
             completed_at: resolved_at,
             duration: duration,
+            error: error
         }
       end
 
@@ -38,10 +40,16 @@ module ThomasUtils
       context 'with an observation' do
         before do
           monitor.monitor(sender, method, monitor_name, future)
-          future.get
+          future.join
         end
 
         it { is_expected.to include(log_item) }
+
+        context 'with an error' do
+          let(:error) { StandardError.new(Faker::Lorem.sentence) }
+
+          it { is_expected.to include(log_item) }
+        end
       end
 
       context 'with a block' do
