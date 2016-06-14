@@ -9,7 +9,11 @@ module ThomasUtils
     end
 
     def monitor_performance(method, monitor_name, item = nil, &block)
-      performance_monitor.monitor(self, method, monitor_name, item, &block)
+      if performance_monitor
+        performance_monitor.monitor(self, method, monitor_name, item, &block)
+      else
+        item ? item : Future.immediate(&block)
+      end
     end
   end
 end
