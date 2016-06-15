@@ -9,5 +9,9 @@ module ThomasUtils
     def write(entry)
       @log << entry
     end
+
+    def clear
+      @log.clear
+    end
   end
 end

@@ -19,5 +19,14 @@ module ThomasUtils
       end
     end
 
+    describe '#clear' do
+      before do
+        Faker::Lorem.words.each { |entry| subject.write(entry) }
+        subject.clear
+      end
+
+      its(:log) { is_expected.to be_empty }
+    end
+
   end
 end
