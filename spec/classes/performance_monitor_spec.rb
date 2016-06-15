@@ -3,14 +3,7 @@ require 'rspec'
 module ThomasUtils
   describe PerformanceMonitor do
 
-    let(:logger_klass) do
-      Class.new do
-        attr_reader :log
-        define_method(:initialize) { @log = [] }
-        define_method(:write) { |entry| @log << entry }
-      end
-    end
-    let(:logger) { logger_klass.new }
+    let(:logger) { InMemoryLogger.new }
     let(:monitor) { PerformanceMonitor.new(logger) }
 
     describe '#monitor' do
@@ -18,7 +11,7 @@ module ThomasUtils
       let(:method) { Faker::Lorem.word.to_sym }
       let(:monitor_name) { Faker::Lorem.sentence }
       let(:initialized_at) { Time.now }
-      let(:duration) { rand * 60 }
+      let(:duration) { (rand * 60).round(4) }
       let(:resolved_at) { initialized_at + duration }
       let(:const_var) { ConstantVar.new(resolved_at, nil, error) }
       let(:future) { Observation.new(Future::IMMEDIATE_EXECUTOR, const_var, initialized_at) }
