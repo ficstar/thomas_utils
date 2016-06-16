@@ -43,6 +43,22 @@ module ThomasUtils
 
           it { is_expected.to include(log_item) }
         end
+
+        context 'when the monitor name is a hash' do
+          let(:monitor_name) { Faker::Lorem.words.inject({}) { |memo, word| memo.merge!(word => Faker::Lorem.sentence) } }
+          let(:log_item) do
+            {
+                sender: sender,
+                method: method,
+                started_at: initialized_at,
+                completed_at: resolved_at,
+                duration: duration,
+                error: error
+            }.merge(monitor_name)
+          end
+
+          it { is_expected.to include(log_item) }
+        end
       end
 
       context 'with a block' do
