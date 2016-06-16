@@ -95,7 +95,7 @@ module ThomasUtils
     def successive(method, &block)
       observable = Concurrent::IVar.new
       send(method, observable, &block)
-      Observation.new(@executor, observable)
+      Observation.new(@executor, observable, @initialized_at)
     end
 
     def on_complete_then(observable, &block)

@@ -255,6 +255,8 @@ module ThomasUtils
 
       it { is_expected.to be_a_kind_of(Observation) }
 
+      its(:initialized_at) { is_expected.to eq(observation.initialized_at) }
+
       its(:get) { is_expected.to eq(expected_result) }
 
       context 'when the observation has failed' do
