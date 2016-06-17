@@ -9,13 +9,13 @@ module ThomasUtils
       item = Future.immediate(&block) unless item
       meta_data = {name: meta_data} unless meta_data.is_a?(Hash)
 
-      item.on_complete do |_, error|
+      item.on_timed do |initialized_at, resolved_at, duration, _, error|
         performance_message = {
             sender: sender,
             method: method,
-            started_at: item.initialized_at,
-            completed_at: item.resolved_at,
-            duration: item.resolved_at - item.initialized_at,
+            started_at: initialized_at,
+            completed_at: resolved_at,
+            duration: duration,
             error: error,
         }.merge(meta_data)
         @logger.write(performance_message)
