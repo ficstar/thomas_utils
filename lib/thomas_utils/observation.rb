@@ -32,7 +32,10 @@ module ThomasUtils
     end
 
     def on_timed
-      on_complete { yield @initialized_at, @resolved_at, (@resolved_at - @initialized_at) }
+      on_complete do
+        resolved_at = @resolved_at || Time.now
+        yield @initialized_at, resolved_at, (resolved_at - @initialized_at)
+      end
     end
 
     def on_complete

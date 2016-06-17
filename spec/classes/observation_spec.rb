@@ -161,13 +161,14 @@ module ThomasUtils
       let(:initialized_at) { Time.now }
       let(:time_to_resolve) { rand(1..10) * 60 }
       let(:resolved_at) { initialized_at + time_to_resolve }
+      let(:now) { nil }
       let(:result_klass) { Struct.new(:initialized_at, :resolved_at, :duration) }
       let(:result) { result_klass.new }
 
       subject { result }
 
       before do
-        allow(Time).to receive(:now).and_return(initialized_at, resolved_at)
+        allow(Time).to receive(:now).and_return(initialized_at, resolved_at, now)
         observation.on_timed do |initialized_at, resolved_at, duration|
           result.initialized_at = initialized_at
           result.resolved_at = resolved_at
@@ -178,6 +179,14 @@ module ThomasUtils
       its(:initialized_at) { is_expected.to eq(initialized_at) }
       its(:resolved_at) { is_expected.to eq(resolved_at) }
       its(:duration) { is_expected.to eq(time_to_resolve) }
+
+      context 'when the #resolved_at has not been set for some reason' do
+        let(:resolved_at) { nil }
+        let(:now) { initialized_at + time_to_resolve }
+
+        its(:resolved_at) { is_expected.to eq(now) }
+        its(:duration) { is_expected.to eq(time_to_resolve) }
+      end
     end
 
     describe '#on_complete' do
