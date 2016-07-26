@@ -13,7 +13,8 @@ module ThomasUtils
       let(:initialized_at) { Time.now }
       let(:duration) { (rand * 60).round(4) }
       let(:resolved_at) { initialized_at + duration }
-      let(:const_var) { ConstantVar.new(resolved_at, nil, error) }
+      let(:result) { Faker::Lorem.sentence }
+      let(:const_var) { ConstantVar.new(resolved_at, result, error) }
       let(:future) { Observation.new(Future::IMMEDIATE_EXECUTOR, const_var, initialized_at) }
       let(:error) { nil }
       let(:log_item) do
@@ -24,7 +25,8 @@ module ThomasUtils
             started_at: initialized_at,
             completed_at: resolved_at,
             duration: duration,
-            error: error
+            error: error,
+            result: result
         }
       end
 
@@ -53,7 +55,8 @@ module ThomasUtils
                 started_at: initialized_at,
                 completed_at: resolved_at,
                 duration: duration,
-                error: error
+                error: error,
+                result: result,
             }.merge(monitor_name)
           end
 
@@ -64,7 +67,7 @@ module ThomasUtils
       context 'with a block' do
         before do
           allow(Time).to receive(:now).and_return(initialized_at, resolved_at)
-          monitor.monitor(sender, method, monitor_name) {  }
+          monitor.monitor(sender, method, monitor_name) { result }
           future.get
         end
 
