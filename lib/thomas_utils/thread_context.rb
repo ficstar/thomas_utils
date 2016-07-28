@@ -1,7 +1,12 @@
 module ThomasUtils
   class ThreadContext < Hash
     def self.current
-      Thread.current[:__tutils_thread_context] ||= ThreadContext.new
+      Thread.current[:__tutils_thread_context] ||= ThreadContext.new(Thread.current)
+    end
+
+    def initialize(thread)
+      @thread = thread
+      super()
     end
 
     def push_state(attributes)
@@ -14,6 +19,11 @@ module ThomasUtils
       else
         yield
       end
+    end
+
+    def id
+      id = @thread.object_id.to_s(16)
+      "0x#{id}"
     end
 
     private

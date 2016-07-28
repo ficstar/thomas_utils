@@ -5,6 +5,8 @@ module ThomasUtils
 
     before { Thread.current[:__tutils_thread_context] = nil }
 
+    subject { ThreadContext.new(Thread.current) }
+
     it { is_expected.to be_a_kind_of(Hash) }
 
     describe '.current' do
@@ -74,6 +76,27 @@ module ThomasUtils
         it 'returns the result of the block' do
           result = subject.push_state({}) { expected_result }
           expect(result).to eq(expected_result)
+        end
+      end
+    end
+
+    describe '#id' do
+      let(:thread_id) { Thread.current.object_id.to_s(16) }
+      let(:expected_id) { "0x#{thread_id}" }
+
+      subject { ThreadContext.current }
+
+      its(:id) { is_expected.to eq(expected_id) }
+
+      context 'when called from a different thread' do
+        it 'should use the proper thread id' do
+          expected_id = nil
+          context = Thread.new do
+            thread_id = Thread.current.object_id.to_s(16)
+            expected_id = "0x#{thread_id}"
+            ThreadContext.current
+          end.value
+          expect(context.id).to eq(expected_id)
         end
       end
     end
