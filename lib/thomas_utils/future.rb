@@ -26,6 +26,8 @@ module ThomasUtils
     end
 
     def self.all(observations)
+      return value([]) if observations.none?
+
       initialized_at = observations.map(&:initialized_at).min
       observable = Concurrent::IVar.new
       left = observations.count

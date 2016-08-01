@@ -104,6 +104,12 @@ module ThomasUtils
         end
       end
 
+      context 'with no futures' do
+        let(:list_of_futures) { [] }
+
+        its(:get) { is_expected.to eq([]) }
+      end
+
       context 'with an error' do
         let(:error) { StandardError.new(Faker::Lorem.sentence) }
         let(:future) { Future.error(error) }
