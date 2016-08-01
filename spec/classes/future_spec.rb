@@ -93,6 +93,15 @@ module ThomasUtils
         let(:list_of_futures) { [future, future_two] }
 
         its(:get) { is_expected.to eq([value, value_two]) }
+
+        context 'with an error on both futures' do
+          let(:error) { StandardError.new(Faker::Lorem.sentence) }
+          let(:error_two) { StandardError.new(Faker::Lorem.sentence) }
+          let(:future) { Future.error(error) }
+          let(:future_two) { Future.error(error_two) }
+
+          it { expect { subject.get }.to raise_error(error) }
+        end
       end
 
       context 'with an error' do

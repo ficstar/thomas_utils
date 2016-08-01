@@ -34,7 +34,9 @@ module ThomasUtils
       observations.each_with_index do |observation, index|
         observation.on_complete do |value, error|
           if error
-            observable.fail(error)
+            mutex.synchronize do
+              observable.fail(error) unless observable.complete?
+            end
           else
             buffer[index] = value
             done = false
