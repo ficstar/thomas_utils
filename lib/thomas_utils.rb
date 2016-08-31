@@ -18,6 +18,7 @@ require 'concurrent'
 require 'workers'
 
 require 'thomas_utils/symbol_helpers'
+require 'thomas_utils/mutex'
 require 'thomas_utils/thread_context'
 require 'thomas_utils/object_stream'
 require 'thomas_utils/periodic_flusher'
