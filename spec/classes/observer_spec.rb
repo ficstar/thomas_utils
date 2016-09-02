@@ -4,13 +4,7 @@ module ThomasUtils
   describe Observer do
 
     let(:klass) do
-      Class.new do
-        include Observer
-
-        def initialize(observation)
-          @observation = observation
-        end
-      end
+      Struct.new(:observation) { include Observer }
     end
     let(:observation) { double(:observation) }
     let(:observer) { klass.new(observation) }

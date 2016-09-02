@@ -2,7 +2,7 @@ module ThomasUtils
   module Observer
     extend Forwardable
 
-    def_delegators :@observation,
+    def_delegators :observation,
                    :on_success,
                    :on_failure,
                    :on_complete,
