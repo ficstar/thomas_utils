@@ -8,6 +8,8 @@ module ThomasUtils
                    :on_complete,
                    :on_timed,
                    :join,
+                   :get,
+                   :resolved_at,
                    :then,
                    :none_fallback,
                    :fallback,

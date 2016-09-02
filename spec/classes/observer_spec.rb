@@ -29,6 +29,8 @@ module ThomasUtils
     it_behaves_like 'a method delegating to an Observation', :on_complete
     it_behaves_like 'a method delegating to an Observation', :on_timed
     it_behaves_like 'a method delegating to an Observation', :join
+    it_behaves_like 'a method delegating to an Observation', :get
+    it_behaves_like 'a method delegating to an Observation', :resolved_at
     it_behaves_like 'a method delegating to an Observation', :then
     it_behaves_like 'a method delegating to an Observation', :none_fallback
     it_behaves_like 'a method delegating to an Observation', :fallback
