@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'thomas_utils'
-  s.version = '0.2.9'
+  s.version = '0.2.10'
   s.license = 'Apache License 2.0'
   s.summary = 'Helper utilities gem used in a number of my projects'
   s.description = %q{Helper utilities gem used in a number of my projects.
