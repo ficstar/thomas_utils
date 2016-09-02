@@ -14,21 +14,15 @@ module ThomasUtils
     end
 
     def on_success
-      @observable.add_observer do |_, value, error|
-        @executor.post do
-          yield value unless error
-        end
+      on_complete do |value, error|
+        yield value unless error
       end
-      self
     end
 
     def on_failure
-      @observable.add_observer do |_, _, error|
-        @executor.post do
-          yield error if error
-        end
+      on_complete do |_, error|
+        yield error if error
       end
-      self
     end
 
     def on_timed
