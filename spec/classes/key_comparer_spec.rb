@@ -140,6 +140,13 @@ describe Symbol do
       it { is_expected.to eq("key #{comparer}") }
     end
   end
+
+  describe '.to_comparer' do
+    let(:key) { Faker::Lorem.word.to_sym }
+    let(:comparer) { Faker::Lorem.word }
+    subject { key.to_comparer(comparer).to_s }
+    it { is_expected.to eq("#{key} #{comparer}") }
+  end
 end
 
 describe Array do

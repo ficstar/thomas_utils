@@ -3,7 +3,11 @@ module ThomasUtils
     OPERATOR_MAP = {eq: '=', ge: '>=', gt: '>', le: '<=', lt: '<', ne: '!='}
 
     OPERATOR_MAP.each do |method, operator|
-      define_method(method) { ThomasUtils::KeyComparer.new(self, operator) }
+      define_method(method) { to_comparer(operator) }
+    end
+
+    def to_comparer(operator)
+      ThomasUtils::KeyComparer.new(self, operator)
     end
 
     def index(index)
