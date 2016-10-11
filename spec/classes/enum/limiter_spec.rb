@@ -7,6 +7,8 @@ module ThomasUtils
       let(:enum) { (0...10) }
       let(:limit) { 10 }
       let(:result_limiter) { Limiter.new(enum, limit) }
+      let(:enum_modifier) { result_limiter }
+      let(:enum_modifier_klass) { Limiter }
 
       subject { result_limiter }
 
@@ -85,12 +87,12 @@ module ThomasUtils
         let(:respond_method) { :each }
         let(:include_all) { rand(0..1).nonzero? }
 
-        subject { result_limiter.respond_to?(respond_method, include_all) }
+        subject { enum_modifier.respond_to?(respond_method, include_all) }
 
         it { is_expected.to eq(true) }
 
         context 'without including everything' do
-          subject { result_limiter.respond_to?(respond_method) }
+          subject { enum_modifier.respond_to?(respond_method) }
 
           it { is_expected.to eq(true) }
         end
@@ -109,22 +111,24 @@ module ThomasUtils
       end
 
       describe '#method_missing' do
+        let(:limit) { rand(0...enum_two.count) }
+        let(:result_enum_modifier) { Limiter.new(enum_two, limit) }
+
         let(:respond_method) { Faker::Lorem.word.to_sym }
         let(:enum_two) { Faker::Lorem.words }
-        let(:limit) { enum_two.count }
         let(:enum) { double(:enum) }
         let(:args) { Faker::Lorem.words }
         let(:block) { ->() {} }
 
-        subject { result_limiter.public_send(respond_method, *args, &block) }
+        subject { enum_modifier.public_send(respond_method, *args, &block) }
 
         before do
           allow(enum).to receive(respond_method).with(*args).and_return(enum_two)
         end
 
-        it { is_expected.to be_a_kind_of(Limiter) }
+        it { is_expected.to be_a_kind_of(enum_modifier_klass) }
 
-        its(:to_a) { is_expected.to eq(enum_two) }
+        its(:to_a) { is_expected.to eq(result_enum_modifier.to_a) }
 
         context 'with a block required' do
           let(:some_double) { double(:some_double, call: nil) }
