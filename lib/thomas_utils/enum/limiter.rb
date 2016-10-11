@@ -19,6 +19,15 @@ module ThomasUtils
 
       alias :get :to_a
 
+      def respond_to?(method, include_all = false)
+        super(method, include_all) || enum.respond_to?(method, include_all)
+      end
+
+      def method_missing(method, *args, &block)
+        child_enum = enum.public_send(method, *args, &block)
+        klass.new(child_enum, limit)
+      end
+
       def ==(rhs)
         rhs.is_a?(klass) &&
             enum == rhs.enum &&
