@@ -8,7 +8,7 @@ module ThomasUtils
 
       def method_missing(method, *args, &block)
         child_enum = enum.public_send(method, *args, &block)
-        klass.new(child_enum, limit)
+        new_instance(child_enum)
       end
 
       private

@@ -30,6 +30,12 @@ module ThomasUtils
 
       attr_reader :enum, :limit
 
+      private
+
+      def new_instance(enum)
+        Limiter.new(enum, @limit)
+      end
+
     end
   end
 end
