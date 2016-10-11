@@ -82,9 +82,7 @@ module ThomasUtils
         end
       end
 
-      describe '#respond_to?' do
-        it_behaves_like '#respond_to? for an Enumerable modifier'
-      end
+      it_behaves_like 'an Enumerable modifier'
 
       describe '#method_missing' do
         let(:limit) { rand(0...enum_two.count) }

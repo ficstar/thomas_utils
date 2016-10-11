@@ -1,27 +1,46 @@
-shared_examples_for '#respond_to? for an Enumerable modifier' do
-  let(:enum) { double(:enum) }
-  let(:respond_method) { :each }
-  let(:include_all) { rand(0..1).nonzero? }
+shared_examples_for 'an Enumerable modifier' do
+  describe '#with_index' do
+    let(:enum) { Faker::Lorem.words }
+    let(:result_enum) do
+      index = 0
+      results = []
+      enum_modifier.each do |item|
+        results << [item, index]
+        index += 1
+      end
+      results
+    end
 
-  subject { enum_modifier.respond_to?(respond_method, include_all) }
+    subject { enum_modifier.with_index }
 
-  it { is_expected.to eq(true) }
-
-  context 'without including everything' do
-    subject { enum_modifier.respond_to?(respond_method) }
-
-    it { is_expected.to eq(true) }
+    its(:to_a) { is_expected.to eq(result_enum) }
   end
 
-  context 'with an unsupported method' do
-    let(:respond_method) { Faker::Lorem.word }
+  describe '#respond_to?' do
+    let(:enum) { double(:enum) }
+    let(:respond_method) { :each }
+    let(:include_all) { rand(0..1).nonzero? }
 
-    it { is_expected.to eq(false) }
+    subject { enum_modifier.respond_to?(respond_method, include_all) }
 
-    context 'when the underlying enum supports that method' do
-      before { allow(enum).to receive(:respond_to?).with(respond_method, include_all).and_return(true) }
+    it { is_expected.to eq(true) }
+
+    context 'without including everything' do
+      subject { enum_modifier.respond_to?(respond_method) }
 
       it { is_expected.to eq(true) }
+    end
+
+    context 'with an unsupported method' do
+      let(:respond_method) { Faker::Lorem.word }
+
+      it { is_expected.to eq(false) }
+
+      context 'when the underlying enum supports that method' do
+        before { allow(enum).to receive(:respond_to?).with(respond_method, include_all).and_return(true) }
+
+        it { is_expected.to eq(true) }
+      end
     end
   end
 end

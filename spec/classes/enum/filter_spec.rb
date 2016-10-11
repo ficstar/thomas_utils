@@ -79,9 +79,7 @@ module ThomasUtils
         end
       end
 
-      describe '#respond_to?' do
-        it_behaves_like '#respond_to? for an Enumerable modifier'
-      end
+      it_behaves_like 'an Enumerable modifier'
 
       describe '#method_missing' do
         let(:result_enum_modifier) { Filter.new(enum_two, filter_block) }
