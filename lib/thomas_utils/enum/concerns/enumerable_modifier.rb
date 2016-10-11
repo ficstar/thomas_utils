@@ -1,9 +1,6 @@
 module ThomasUtils
   module Enum
     module EnumerableModifier
-      def with_index(&block)
-        to_enum(:each).with_index(&block)
-      end
 
       def respond_to?(method, include_all = false)
         super(method, include_all) || enum.respond_to?(method, include_all)

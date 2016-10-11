@@ -3,6 +3,7 @@ module ThomasUtils
     class Limiter
       include Enumerable
       include EnumerableModifier
+      include Indexing
 
       def initialize(enum, limit)
         @enum = enum

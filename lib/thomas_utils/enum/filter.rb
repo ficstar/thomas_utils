@@ -3,6 +3,7 @@ module ThomasUtils
     class Filter
       include Enumerable
       include EnumerableModifier
+      include Indexing
 
       def initialize(enum, filter)
         @enum = enum
