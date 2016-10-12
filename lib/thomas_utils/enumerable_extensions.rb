@@ -7,4 +7,8 @@ module Enumerable
     filter ||= filter_block
     ThomasUtils::Enum::Filter.new(self, filter)
   end
+
+  def lazy_union(rhs)
+    ThomasUtils::Enum::Combiner.new(self, rhs)
+  end
 end

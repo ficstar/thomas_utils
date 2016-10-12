@@ -28,4 +28,12 @@ describe Enumerable do
     end
   end
 
+  describe '#lazy_union' do
+    let(:enum_two) { (100...200).to_a }
+    subject { enum.lazy_union(enum_two) }
+
+    it { is_expected.to be_a_kind_of(ThomasUtils::Enum::Combiner) }
+    its(:to_a) { is_expected.to eq(enum.concat(enum_two)) }
+  end
+
 end
