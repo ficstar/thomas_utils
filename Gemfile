@@ -13,6 +13,7 @@ group :test do
   gem 'rspec-its'
   gem 'faker'
   gem 'timecop'
+  gem 'pry'
 end
 
 gemspec

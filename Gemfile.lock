@@ -93,6 +93,7 @@ DEPENDENCIES
   guard
   guard-bundler
   guard-rspec
+  pry
   rspec
   rspec-its
   thomas_utils!
