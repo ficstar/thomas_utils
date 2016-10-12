@@ -7,6 +7,8 @@ module ThomasUtils
       let(:enum) { [] }
       let(:enum_two) { [] }
       let(:combiner) { Combiner.new(enum, enum_two) }
+      let(:enum_modifier) { combiner }
+      let(:enum_modifier_klass) { Combiner }
 
       subject { combiner }
 
@@ -67,6 +69,51 @@ module ThomasUtils
         context 'when the second combiner is of the wrong type' do
           let(:other_combiner) { Limiter.new(enum, 5) }
           it { is_expected.to eq(false) }
+        end
+      end
+
+      describe 'delegation' do
+        let(:enum_two) { double(:enum, each: nil) }
+        let(:responds) { true }
+        let(:respond_method) { :some_method }
+        let(:include_all) { true }
+
+        before do
+          allow(enum_two).to receive(:respond_to?).with(respond_method, include_all).and_return(responds)
+        end
+
+        it_behaves_like 'an Enumerable modifier'
+
+        context 'when the enums are reversed' do
+          let(:combiner) { Combiner.new(enum_two, enum) }
+
+          it_behaves_like 'an Enumerable modifier'
+
+          context 'when that enum does not respond to the same method' do
+            let(:responds) { false }
+
+            describe '#respond_to?' do
+              subject { enum_modifier.respond_to?(respond_method, include_all) }
+              before { allow(enum).to receive(:respond_to?).and_return(true) }
+
+              it { is_expected.to eq(false) }
+            end
+          end
+        end
+      end
+
+      describe '#method_missing' do
+        let(:other_enum) { double(:enum, respond_method => []) }
+        let(:combiner) { Combiner.new(enum, other_enum) }
+        let(:result_enum_modifier) { Combiner.new(enum_two, []) }
+
+        it_behaves_like '#method_missing for an Enumerable modifier'
+
+        context 'when the enums are reversed' do
+          let(:combiner) { Combiner.new(other_enum, enum) }
+          let(:result_enum_modifier) { Combiner.new([], enum_two) }
+
+          it_behaves_like '#method_missing for an Enumerable modifier'
         end
       end
 
