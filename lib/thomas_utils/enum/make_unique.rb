@@ -2,6 +2,8 @@ module ThomasUtils
   module Enum
     class MakeUnique
       include Enumerable
+      include EnumerableModifier
+      include Indexing
 
       def initialize(enum, callback)
         @enum = enum
@@ -24,6 +26,10 @@ module ThomasUtils
       private
 
       attr_reader :enum, :callback
+
+      def new_instance(enum)
+        MakeUnique.new(enum, callback)
+      end
 
     end
   end
