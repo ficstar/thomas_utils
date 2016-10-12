@@ -36,4 +36,25 @@ describe Enumerable do
     its(:to_a) { is_expected.to eq(enum.concat(enum_two)) }
   end
 
+  describe '#lazy_uniq' do
+    let(:enum) { [0, 1, 1, 2, 2, 3] }
+    subject { enum.lazy_uniq }
+
+    it { is_expected.to be_a_kind_of(ThomasUtils::Enum::MakeUnique) }
+    its(:to_a) { is_expected.to eq((0..3).to_a) }
+
+    context 'with a block provided' do
+      let(:block) { ->(item) { item % 2 == 0 } }
+      subject { enum.lazy_uniq(&block) }
+
+      its(:to_a) { is_expected.to eq([0, 1]) }
+
+      context 'when the block is provided as a parameter' do
+        subject { enum.lazy_uniq(block) }
+
+        its(:to_a) { is_expected.to eq([0, 1]) }
+      end
+    end
+  end
+
 end
