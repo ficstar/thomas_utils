@@ -4,12 +4,21 @@ describe Enumerable do
 
   let(:enum) { (0...100).to_a }
 
-  describe '#lazy_limit' do
+  shared_examples_for 'a result limiting modifier' do
     let(:limit) { rand(0...100) }
-    subject { enum.lazy_limit(limit) }
 
     it { is_expected.to be_a_kind_of(ThomasUtils::Enum::Limiter) }
     its(:to_a) { is_expected.to eq(enum[0...limit]) }
+  end
+
+  describe '#lazy_limit' do
+    subject { enum.lazy_limit(limit) }
+    it_behaves_like 'a result limiting modifier'
+  end
+
+  describe '#limit' do
+    subject { enum.limit(limit) }
+    it_behaves_like 'a result limiting modifier'
   end
 
   describe '#lazy_filter' do

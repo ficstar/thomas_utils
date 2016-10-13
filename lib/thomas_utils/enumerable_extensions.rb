@@ -5,6 +5,8 @@ module Enumerable
     ThomasUtils::Enum::Limiter.new(self, limit)
   end
 
+  alias :limit :lazy_limit
+
   def lazy_filter(filter = nil, &filter_block)
     filter ||= filter_block
     ThomasUtils::Enum::Filter.new(self, filter)
