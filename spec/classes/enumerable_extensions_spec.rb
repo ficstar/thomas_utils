@@ -37,6 +37,22 @@ describe Enumerable do
     end
   end
 
+  describe '#lazy_map' do
+    let(:limit) { rand(0...100) }
+    let(:mapping) { ->(item) { item + limit } }
+    subject { enum.lazy_map(&mapping) }
+
+    it { is_expected.to be_a_kind_of(ThomasUtils::Enum::Mapping) }
+    its(:to_a) { is_expected.to eq(enum.map(&mapping)) }
+
+    context 'when passed in as a parameter instead of a block' do
+      subject { enum.lazy_map(mapping) }
+
+      it { is_expected.to be_a_kind_of(ThomasUtils::Enum::Mapping) }
+      its(:to_a) { is_expected.to eq(enum.map(&mapping)) }
+    end
+  end
+
   describe '#lazy_union' do
     let(:enum_two) { (100...200).to_a }
     subject { enum.lazy_union(enum_two) }

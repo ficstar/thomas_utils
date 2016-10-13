@@ -12,6 +12,11 @@ module Enumerable
     ThomasUtils::Enum::Filter.new(self, filter)
   end
 
+  def lazy_map(mapping = nil, &mapping_block)
+    mapping ||= mapping_block
+    ThomasUtils::Enum::Mapping.new(self, mapping)
+  end
+
   def lazy_union(rhs)
     ThomasUtils::Enum::Combiner.new(self, rhs)
   end
