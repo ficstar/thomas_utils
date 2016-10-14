@@ -10,17 +10,24 @@ module ThomasUtils
         let(:name) { Faker::Lorem.sentence }
         let(:max_threads) { rand(1..100) }
         let(:max_queue) { rand(100..5000) }
+        let!(:built_executor) { collection.build(name, max_threads, max_queue) }
 
         subject { collection[name] }
 
-        before { collection.build(name, max_threads, max_queue) }
-
         it { is_expected.to be_a_kind_of(Concurrent::ThreadPoolExecutor) }
+        it { is_expected.to eq(built_executor) }
         its(:min_length) { is_expected.to be_zero }
         its(:max_length) { is_expected.to eq(max_threads) }
         its(:max_queue) { is_expected.to eq(max_queue) }
         its(:fallback_policy) { is_expected.to eq(:caller_runs) }
         its(:auto_terminate?) { is_expected.to eq(true) }
+
+        context 'with no limits provided' do
+          let!(:built_executor) { collection.build(name) }
+
+          it { is_expected.to be_a_kind_of(Concurrent::CachedThreadPool) }
+          its(:auto_terminate?) { is_expected.to eq(true) }
+        end
       end
 
       describe '#stats' do

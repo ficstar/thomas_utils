@@ -8,7 +8,7 @@ module ThomasUtils
       @default_collection[name]
     end
 
-    def self.build(name, max_threads, max_queue)
+    def self.build(name, max_threads = nil, max_queue = nil)
       @default_collection.build(name, max_threads, max_queue)
     end
 
@@ -20,14 +20,18 @@ module ThomasUtils
       @collection = {}
     end
 
-    def build(name, max_threads, max_queue)
-      @collection[name] = Concurrent::ThreadPoolExecutor.new(
-          min_threads: 0,
-          max_threads: max_threads,
-          max_queue: max_queue,
-          fallback_policy: :caller_runs,
-          auto_terminate: true
-      )
+    def build(name, max_threads = nil, max_queue = nil)
+      @collection[name] = if max_threads
+                            Concurrent::ThreadPoolExecutor.new(
+                                min_threads: 0,
+                                max_threads: max_threads,
+                                max_queue: max_queue,
+                                fallback_policy: :caller_runs,
+                                auto_terminate: true
+                            )
+                          else
+                            Concurrent::CachedThreadPool.new
+                          end
     end
 
     def stats
