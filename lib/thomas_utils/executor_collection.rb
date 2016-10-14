@@ -13,7 +13,7 @@ module ThomasUtils
     end
 
     def initialize
-      @collection = Concurrent::Map.new
+      @collection = {}
     end
 
     def build(name, max_threads, max_queue)
