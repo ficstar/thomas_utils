@@ -144,7 +144,7 @@ module ThomasUtils
       it { expect(Future::DEFAULT_EXECUTOR).to be_a_kind_of(Concurrent::CachedThreadPool) }
       it { expect(Future::IMMEDIATE_EXECUTOR).to be_a_kind_of(Concurrent::ImmediateExecutor) }
 
-      it 'should use execute within the default executor context' do
+      it 'should execute within the default executor context' do
         expect(Future::DEFAULT_EXECUTOR).to receive(:post) do |&block|
           block.call
           expect(block_result).to eq([value])
@@ -162,7 +162,7 @@ module ThomasUtils
 
         before { allow(Future::DEFAULT_EXECUTOR).to receive(:post) }
 
-        it 'should use execute within the default executor context' do
+        it 'should execute within the specified executor context' do
           subject
           expect(block_result).to eq([value])
         end
@@ -170,6 +170,17 @@ module ThomasUtils
         it 'should support chained executions' do
           salt = Faker::Lorem.word
           expect(subject.then { |result| [result, salt] }.get).to eq([value, salt])
+        end
+
+        context 'when the executor is a name' do
+          let(:executor) { Faker::Lorem.sentence }
+
+          before { ExecutorCollection.build(executor, 1, 0) }
+
+          it 'should execute within the named executor context' do
+            subject.join
+            expect(block_result).to eq([value])
+          end
         end
       end
     end

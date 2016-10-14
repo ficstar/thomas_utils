@@ -55,6 +55,7 @@ module ThomasUtils
 
     def initialize(options = {}, &block)
       executor = options.fetch(:executor) { DEFAULT_EXECUTOR }
+      executor = ExecutorCollection[executor] unless executor.is_a?(Concurrent::ExecutorService)
       observable = Concurrent::Future.execute(executor: executor, &block)
       super(executor, observable)
     end
