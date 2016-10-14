@@ -4,6 +4,14 @@ module ThomasUtils
 
     def_delegator :@collection, :[]
 
+    def self.[](name)
+      @default_collection[name]
+    end
+
+    def self.build(name, max_threads, max_queue)
+      @default_collection.build(name, max_threads, max_queue)
+    end
+
     def initialize
       @collection = Concurrent::Map.new
     end
@@ -18,5 +26,6 @@ module ThomasUtils
       )
     end
 
+    @default_collection = new.freeze
   end
 end
