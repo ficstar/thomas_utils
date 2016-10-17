@@ -140,7 +140,7 @@ module ThomasUtils
       end
     end
 
-    describe 'execution' do
+    shared_examples_for 'Future execution' do
       it { expect(Future::DEFAULT_EXECUTOR).to be_a_kind_of(Concurrent::CachedThreadPool) }
       it { expect(Future::IMMEDIATE_EXECUTOR).to be_a_kind_of(Concurrent::ImmediateExecutor) }
 
@@ -183,6 +183,22 @@ module ThomasUtils
           end
         end
       end
+    end
+
+    describe '.successive' do
+      let(:future) { Future.successive(options, &block) }
+
+      it_behaves_like 'Future execution'
+
+      context 'when the block itself returns a future' do
+        let(:block) { ->() { Future.immediate { block_result << value; value } } }
+
+        it_behaves_like 'Future execution'
+      end
+    end
+
+    describe 'execution' do
+      it_behaves_like 'Future execution'
     end
 
   end
