@@ -17,7 +17,7 @@ module ThomasUtils
     end
 
     def initialize
-      @collection = {}
+      @collection = {immediate: Concurrent::ImmediateExecutor.new}
     end
 
     def build(name, max_threads = nil, max_queue = nil)
@@ -36,14 +36,26 @@ module ThomasUtils
 
     def stats
       @collection.inject({}) do |stats, (name, executor)|
-        executor_stats = {
-            maximum_active_tasks: executor.max_length,
-            maximum_queued_tasks: executor.max_queue,
-            largest_length: executor.largest_length,
-            completed: executor.completed_task_count,
-            pending: executor.queue_length,
-            active: executor.scheduled_task_count - executor.completed_task_count - executor.queue_length
-        }
+        executor_stats = case executor
+                           when Concurrent::ImmediateExecutor
+                             {
+                                 maximum_active_tasks: 1,
+                                 maximum_queued_tasks: 0,
+                                 largest_length: 1,
+                                 completed: -1,
+                                 pending: 0,
+                                 active: -1
+                             }
+                           else
+                             {
+                                 maximum_active_tasks: executor.max_length,
+                                 maximum_queued_tasks: executor.max_queue,
+                                 largest_length: executor.largest_length,
+                                 completed: executor.completed_task_count,
+                                 pending: executor.queue_length,
+                                 active: executor.scheduled_task_count - executor.completed_task_count - executor.queue_length
+                             }
+                         end
         stats.merge(name => executor_stats)
       end
     end

@@ -6,6 +6,12 @@ module ThomasUtils
     let(:collection) { ExecutorCollection.new }
 
     shared_examples_for 'an executor collection' do
+      describe 'default executors' do
+        it 'should include an immediate executor' do
+          expect(collection[:immediate]).to be_a_kind_of(Concurrent::ImmediateExecutor)
+        end
+      end
+
       describe '#build' do
         let(:name) { Faker::Lorem.sentence }
         let(:max_threads) { rand(1..100) }
@@ -55,6 +61,17 @@ module ThomasUtils
         it { is_expected.to include(completed: completed_task_count) }
         it { is_expected.to include(pending: queue_length) }
         it { is_expected.to include(active: scheduled_task_count - completed_task_count - queue_length) }
+
+        describe 'the immediate executor' do
+          subject { collection.stats[:immediate] }
+
+          it { is_expected.to include(maximum_active_tasks: 1) }
+          it { is_expected.to include(maximum_queued_tasks: 0) }
+          it { is_expected.to include(largest_length: 1) }
+          it { is_expected.to include(completed: -1) }
+          it { is_expected.to include(pending: 0) }
+          it { is_expected.to include(active: -1) }
+        end
       end
     end
 
